@@ -1,0 +1,179 @@
+import { Button } from 'primereact/button';
+import { Avatar } from 'primereact/avatar';
+import React, { useEffect, useRef, useState } from 'react';
+import { Alert } from 'reactstrap';
+import { useAppDispatch, useAppSelector } from 'app/config/store';
+import { Link, RouteComponentProps } from 'react-router-dom';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import TodosCard from 'app/entities/ecosistema/todosCard';
+import { TabView, TabPanel } from 'primereact/tabview';
+import { ScrollPanel } from 'primereact/scrollpanel';
+
+import { getEntity, getEntityByUserId } from 'app/entities/usuario-ecosistema/usuario-ecosistema.reducer';
+import { getArchivo } from 'app/entities/Files/files.reducer';
+
+import { Translate, getUrlParameter } from 'react-jhipster';
+import { Toolbar } from 'primereact/toolbar';
+import { InputText } from 'primereact/inputtext';
+import { Badge } from 'primereact/badge';
+import EcositemasCardUser from 'app/entities/ecosistema/ecositemasCardUser';
+import { TieredMenu } from 'primereact/tieredmenu';
+import { toast } from 'react-toastify';
+import { Menu } from 'primereact/menu';
+import { Toast } from 'primereact/toast';
+import { SplitButton } from 'primereact/splitbutton';
+import VistaGeneralEcositema1 from 'app/entities/ecosistema/VistaGeneralEcositema1';
+import MenuUsuario from './menu';
+import { Skeleton } from 'primereact/skeleton';
+import SkeletonEcositemas from './SkeletonEcositemas';
+import MenuUsuarioNotificaciones from './menu-notificaciones ';
+import { reset as resetNoti } from 'app/entities/notificacion/notificacion.reducer';
+import VistaGeneral from 'app/entities/ecosistema/VistaGeneral';
+
+const Usuario = (props: RouteComponentProps<{ index: any }>) => {
+  const dispatch = useAppDispatch();
+  const account = useAppSelector(state => state.authentication.account);
+  const usuarioEcosistema = useAppSelector(state => state.usuarioEcosistema.entity);
+  const success = useAppSelector(state => state.usuarioEcosistema.success);
+  const loading = useAppSelector(state => state.usuarioEcosistema.loading);
+  const [texto, setTexto] = useState('');
+  const [texto1, setTexto1] = useState('');
+
+  const [imagenRetos, setImagenRetos] = useState(null);
+  const [imagenNoticias, setImagenNoticias] = useState(null);
+  const [imagenProyectos, setImagenProyectos] = useState(null);
+
+  const [activeIndex, setActiveIndex] = useState(props.match.params.index ? parseInt(props.match.params.index, 10) + 1 : 1);
+
+  const [index, setIndex] = useState(parseInt(props.match.params.index, 10));
+  const [miLista, setMiLista] = useState([]);
+
+  const toast1 = useRef(null);
+
+  useEffect(() => {
+    dispatch(getEntityByUserId(account.id));
+  }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      const myList = usuarioEcosistema.ecosistemas?.map(usuario => usuario.id) || [];
+      setMiLista(myList);
+    }
+  }, [loading]);
+  const rightToolbarTemplate = () => {
+    return (
+      <div className="flex  ">
+        <MenuUsuarioNotificaciones id={1} index={1} usuariologeado={account} />
+      </div>
+    );
+  };
+  const leftToolbarTemplate = () => {
+    return (
+      <div className="flex justify-content-start">
+        <MenuUsuario account1={account} />
+      </div>
+    );
+  };
+  const tabHeaderITemplate = (options, i) => {
+    return (
+      <div
+        className="flex align-items-center border-round-2xl shadow-4 pt-2"
+        style={{ cursor: 'pointer' }}
+        onClick={e => setActiveIndex(i)}
+      >
+        <Avatar image={`data:${options.logoUrlContentType};base64,${options.logoUrl}`} shape="circle" className="ml-2" />
+        <h5 className="text-700 text-xl text-blue-600 font-medium  p-2 "> {options.nombre}</h5>
+      </div>
+    );
+  };
+  const tabHeaderITemplate1 = (options, i) => {
+    return (
+      <div
+        className="flex align-items-center border-round-2xl shadow-4 pt-2"
+        style={{ cursor: 'pointer' }}
+        onClick={e => setActiveIndex(i)}
+      >
+        <h5 className="text-700 text-xl text-blue-600 font-medium  p-2 "> {options}</h5>
+      </div>
+    );
+  };
+
+  return (
+    <>
+      <div className="card mt-4 mb-4">
+        <Toolbar className="mt-1 flex flex-row bg-gray-200" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
+
+        <div className="flex flex-row mt-2 ">
+          <div className="flex justify-content-start">
+            <h5 className="text-900 text-2xl text-blue-600 font-medium mt-2 mb-2">Ecosistemas</h5>
+          </div>
+          <div className="flex justify-content-end ml-auto">
+            <div className=" p-inputgroup  ">
+              <InputText value={texto} placeholder="Búsqueda-Innovaciones" onChange={e => setTexto(e.target.value)} />
+              {texto ? (
+                <Link to={`/entidad/innovacion-racionalizacion/buscar/${texto}`} className="btn btn-primary" onClick={e => setTexto('')}>
+                  <i className="pi pi-search pt-2" style={{ fontSize: '1em' }}></i>
+                </Link>
+              ) : (
+                <Link to="#" className="btn btn-secondary">
+                  <i className="pi pi-search pt-2" style={{ fontSize: '1em' }}></i>
+                </Link>
+              )}
+            </div>
+
+            <div className=" p-inputgroup ml-3 ">
+              <InputText value={texto1} placeholder="Búsqueda-Proyectos" onChange={e => setTexto1(e.target.value)} />
+              {texto1 ? (
+                <Link to={`/entidad/proyectos/proyectos_buscar/${texto1}`} className="btn btn-primary" onClick={e => setTexto1('')}>
+                  <i className="pi pi-search pt-2" style={{ fontSize: '1em' }}></i>
+                </Link>
+              ) : (
+                <Link to="#" className="btn btn-secondary">
+                  <i className="pi pi-search pt-2" style={{ fontSize: '1em' }}></i>
+                </Link>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {!usuarioEcosistema?.ecosistemas ? (
+          <SkeletonEcositemas />
+        ) : usuarioEcosistema?.ecosistemas?.length > 0 ? (
+          <div className="flex flex-row">
+            <TabView activeIndex={activeIndex} onTabChange={e => setActiveIndex(e.index)} scrollable>
+              <TabPanel
+                key={`card-0}`}
+                header="General"
+                headerTemplate={tabHeaderITemplate1('Información General', 0)}
+                headerClassName="flex align-items-center p-2"
+              >
+                <VistaGeneral miLista={miLista} logueado={account} index={0} />
+              </TabPanel>
+
+              {usuarioEcosistema.ecosistemas?.map((usuario, i) => (
+                <TabPanel
+                  key={`card-${i + 1}`}
+                  header={usuario.nombre}
+                  headerTemplate={tabHeaderITemplate(usuario, i + 1)}
+                  headerClassName="flex align-items-center p-2"
+                >
+                  <ScrollPanel style={{ width: '100%', height: '1000px' }}>
+                    <VistaGeneralEcositema1 id={usuario.id} logueado={account} index={i} />
+                  </ScrollPanel>
+                </TabPanel>
+              ))}
+            </TabView>
+          </div>
+        ) : (
+          <div className="alert alert-warning">
+            No esta asociado a ningún ecosistema de la plataforma
+            <Link to={`/entidad/ecosistema/card`} className="btn btn-primary rounded-pill m-3 " id="jh-tre" data-cy="reto">
+              <span className="font-white  p-2">Unirse a un Ecosistema</span>
+            </Link>
+          </div>
+        )}
+      </div>
+    </>
+  );
+};
+export default Usuario;

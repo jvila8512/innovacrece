@@ -1,0 +1,32 @@
+{
+  "jhipsterApp": {
+    "innovacionRacionalizacion": {
+      "home": {
+        "title": "Innovación",
+        "refreshListLabel": "Refrescar lista",
+        "createLabel": "Crear nueva Innovación",
+        "createOrEditLabel": "Crear o editar Innovación",
+        "notFound": "Ninguna Innovación ha sido encontrada"
+      },
+      "created": "Una nueva Innovación ha sido creada",
+      "updated": "Una Innovación ha sido actualizada",
+      "deleted": "Una Innovación ha sido eliminada",
+      "delete": {
+        "question": "¿Seguro que quiere eliminar la Innovación?"
+      },
+      "detail": {
+        "title": "Innovación Racionalización"
+      },
+      "id": "ID",
+      "tematica": "Temática",
+      "fecha": "Fecha",
+      "vp": "Vp",
+      "autores": "Autores",
+      "numeroIdentidad": "Número Identidad",
+      "observacion": "Observación",
+      "aprobada": "Aprobada",
+      "publico": "Público",
+      "tipoIdea": "Tipo Idea"
+    }
+  }
+}

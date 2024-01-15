@@ -1,0 +1,25 @@
+{
+  "jhipsterApp": {
+    "tipoNoticia": {
+      "home": {
+        "title": "Tipo Noticias",
+        "refreshListLabel": "Refrescar lista",
+        "createLabel": "Crear nuevo Tipo Noticia",
+        "createOrEditLabel": "Crear o editar Tipo Noticia",
+        "notFound": "Ningún Tipo Noticias encontrado"
+      },
+      "created": "Un nuevo Tipo Noticia ha sido creado",
+      "updated": "Un Tipo Noticia ha sido actualizado",
+      "deleted": "Un Tipo Noticia ha sido eliminado",
+      "delete": {
+        "question": "¿Seguro que quiere eliminar Tipo Noticia?"
+      },
+      "detail": {
+        "title": "Tipo Noticia"
+      },
+      "id": "ID",
+      "tipoNoticia": "Tipo Noticia",
+      "noticias": "Noticias"
+    }
+  }
+}
