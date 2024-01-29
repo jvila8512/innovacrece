@@ -12,6 +12,7 @@ import { Dialog } from 'primereact/dialog';
 import { getEntities as getComponentes } from 'app/entities/componentes/componentes.reducer';
 import { Translate, openFile } from 'react-jhipster';
 import { Row } from 'reactstrap';
+import { getArchivo } from 'app/entities/Files/files.reducer';
 
 const ComponenteCarusel = props => {
   const dispatch = useAppDispatch();
@@ -64,7 +65,9 @@ const ComponenteCarusel = props => {
         <div className="flex flex-column xl:flex-row xl:align-items-center justify-content-center p-2 gap-4">
           <div className="flex flex-column sm:flex-row  align-items-center  flex-1 gap-4">
             <div className="flex flex-column  gap-3">
-              <div className="text-base font-bold ">{selectedComponente1?.componentehijo} </div>
+              <div className="text-base font-bold ">
+                {selectedComponente1?.componente?.componente} : {selectedComponente1?.componentehijo}{' '}
+              </div>
 
               <div className="surface-overlay w-full  mb-2  overflow-hidden text-overflow-ellipsis">{selectedComponente1?.descripcion}</div>
 
@@ -87,6 +90,20 @@ const ComponenteCarusel = props => {
   const hideDialogNuevo = () => {
     setComponenteDialogNew(false);
     setSelectedComponente(null);
+  };
+  const handleFileDownload = (base64Data, fileName) => {
+    const linkk = document.createElement('a');
+    linkk.setAttribute('href', 'data:aplication/pdf;base64,' + base64Data);
+    linkk.setAttribute('download', fileName);
+    document.body.appendChild(linkk);
+    linkk.click();
+  };
+
+  const descargarDocumento = row => {
+    const retosFiltrar = getArchivo(row.documentoUrlContentType);
+    retosFiltrar.then(response => {
+      handleFileDownload(response.data, row.documentoUrlContentType);
+    });
   };
 
   return (
@@ -137,19 +154,16 @@ const ComponenteCarusel = props => {
                       {selectedComponente?.descripcion}
                     </div>
 
-                    <div className="text-base font-bold ">
-                      Documento:
-                      {selectedComponente?.documentoUrlContentType ? (
-                        <a
-                          className="text-primary"
-                          onClick={openFile(selectedComponente.documentoUrlContentType, selectedComponente.documentoUrl)}
-                        >
-                          &nbsp; &nbsp;
-                          <Translate contentKey="entity.action.open"> Open</Translate>
-                          &nbsp;
-                        </a>
-                      ) : null}
-                    </div>
+                    {selectedComponente?.documentoUrlContentType ? (
+                      <div className="text-base font-bold ">
+                        Documento:
+                        <Button
+                          label="Descargar"
+                          className="p-button-secondary p-button-text ml-3"
+                          onClick={() => descargarDocumento(selectedComponente)}
+                        />
+                      </div>
+                    ) : null}
 
                     {selectedComponente?.link ? (
                       <div className="text-base font-bold ">

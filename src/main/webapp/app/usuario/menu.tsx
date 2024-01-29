@@ -14,6 +14,7 @@ import { Translate, ValidatedField, ValidatedForm, isEmail, translate } from 're
 
 import { getSession } from 'app/shared/reducers/authentication';
 import { saveAccountSettings, reset } from 'app/modules/account/settings/settings.reducer';
+import { updateUser, reset as resetUser } from 'app/modules/administration/user-management/user-management.reducer';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import account from 'app/modules/account';
 import { toast } from 'react-toastify';
@@ -37,6 +38,8 @@ const MenuUsuario = props => {
   const updateSuccessFile = useAppSelector(state => state.files.updateSuccess);
   const loadingFile = useAppSelector(state => state.files.loading);
 
+  const updateSuccess = useAppSelector(state => state.userManagement.updateSuccess);
+
   const [imagenUser, setImagenUser] = useState(null);
 
   useEffect(() => {
@@ -56,37 +59,39 @@ const MenuUsuario = props => {
 
   const borrar = icono => {
     const consulta = deletefile(icono);
-    consulta.then(response => {
-      dispatch(
-        saveAccountSettings({
-          ...accountAutenticado,
-          imageUrl: fileupload.name,
-        })
-      );
-    });
+    consulta.then(response => {});
   };
+  useEffect(() => {
+    if (updateSuccessFile) {
+      if (accountAutenticado.imageUrl !== 'userDesconocido.png') {
+        borrar(accountAutenticado.imageUrl);
+
+        if (fileupload)
+          dispatch(
+            updateUser({
+              ...accountAutenticado,
+              imageUrl: fileupload?.name,
+            })
+          );
+
+        setFileupload(null);
+      }
+    }
+  }, [updateSuccessFile]);
+
+  useEffect(() => {
+    if (updateSuccess) {
+      dispatch(getSession());
+      setPerfilDialog(false);
+    }
+  }, [updateSuccess]);
 
   useEffect(() => {
     if (successMessage) {
       toast.success(translate(successMessage));
-
-      if (fileupload !== null && accountAutenticado.imageUrl !== 'userDesconocido.png') {
-        borrar(accountAutenticado.imageUrl);
-        setFileupload(null);
-      } else setPerfilDialog(false);
+      setPerfilDialog(false);
     }
   }, [successMessage]);
-
-  useEffect(() => {
-    if (updateSuccessFile) {
-      dispatch(
-        saveAccountSettings({
-          ...accountAutenticado,
-          imageUrl: fileupload.name,
-        })
-      );
-    }
-  }, [updateSuccessFile]);
 
   const hidePerfilDialog = () => {
     setPerfilDialog(false);
@@ -111,7 +116,11 @@ const MenuUsuario = props => {
     dispatch(createFile(formData));
   };
 
-  const chooseOptions = { icon: 'pi pi-fw pi-images', iconOnly: true, className: 'custom-choose-btn p-button-rounded p-button-outlined' };
+  const chooseOptions = {
+    icon: 'pi pi-fw pi-images',
+    iconOnly: true,
+    className: 'custom-choose-btn p-button-rounded p-button-outlined',
+  };
   const uploadOptions = {
     icon: 'pi pi-fw pi-cloud-upload',
     iconOnly: true,

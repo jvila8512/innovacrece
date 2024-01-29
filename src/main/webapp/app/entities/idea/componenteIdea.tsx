@@ -4,7 +4,7 @@ import { APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { size } from 'lodash';
 import { Button } from 'primereact/button';
 import { Tag } from 'primereact/tag';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { TextFormat, Translate, ValidatedBlobField, ValidatedField, ValidatedForm, isNumber, translate } from 'react-jhipster';
 import { Link } from 'react-router-dom';
 import { ILikeIdea } from 'app/shared/model/like-idea.model';
@@ -15,7 +15,7 @@ import {
   deleteEntitySinMensaje as deleteNotificacion,
 } from '../../entities/notificacion/notificacion.reducer';
 
-import { updateEntity as actualizarIdea } from '../../entities/idea/idea.reducer';
+import { updateEntity as actualizarIdea, deleteEntity as deleteIdea } from '../../entities/idea/idea.reducer';
 
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { getEntitiesbyReto, getEntity } from './idea.reducer';
@@ -23,6 +23,16 @@ import { Dialog } from 'primereact/dialog';
 import { Row } from 'reactstrap';
 import { Skeleton } from 'primereact/skeleton';
 import dayjs from 'dayjs';
+import {
+  getEntity as getFile,
+  getEntities as getFiles,
+  createEntity as createFile,
+  reset as resetFile,
+  getArchivo,
+  deletefile,
+} from 'app/entities/Files/files.reducer';
+import { Avatar } from 'primereact/avatar';
+import { FileUpload } from 'primereact/fileupload';
 
 const ComponenteIdea = props => {
   const dispatch = useAppDispatch();
@@ -64,6 +74,99 @@ const ComponenteIdea = props => {
 
   const [id, setID] = useState(0);
 
+  const fileUploadRef = useRef(null);
+  const file = useAppSelector(state => state.files.entity);
+  const updatingFile = useAppSelector(state => state.files.updating);
+  const updateSuccessFile = useAppSelector(state => state.files.updateSuccess);
+  const loadingFile = useAppSelector(state => state.files.loading);
+
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [fileModificar, setfileModificar] = useState(null);
+
+  const borrar = icono => {
+    const consulta = deletefile(icono);
+    consulta.then(response => {
+      setSelectedFile(null);
+    });
+  };
+
+  const handleFileUpload = event => {
+    const fileupload = event.files[0];
+    const formData = new FormData();
+    formData.append('files', selectedFile);
+    dispatch(createFile(formData));
+  };
+
+  const chooseOptions = {
+    icon: 'pi pi-fw pi-images',
+    className: 'custom-choose-btn p-button-rounded p-button-outlined',
+  };
+  const uploadOptions = {
+    icon: 'pi pi-fw pi-cloud-upload',
+
+    className: 'custom-upload-btn p-button-success p-button-rounded p-button-outlined p-3',
+  };
+
+  const cancelOptions = { label: 'Cancel', icon: 'pi pi-times', className: 'p-button-danger' };
+
+  const onUpload = e => {};
+
+  const onTemplateSelect = e => {
+    setSelectedFile(e.files[0]);
+  };
+
+  const iconoTemplate = rowData => {
+    return (
+      <>
+        <Avatar image={`content/uploads/${rowData.icono}`} shape="circle" className="p-overlay-badge " size="xlarge" />
+      </>
+    );
+  };
+
+  const headerTemplate = options => {
+    const { className, chooseButton, uploadButton, cancelButton } = options;
+
+    return (
+      <div className={className + ' relative'} style={{ backgroundColor: 'transparent', display: 'flex', alignItems: 'center' }}>
+        {chooseButton}
+      </div>
+    );
+  };
+  const onTemplateRemove = (file1, callback) => {
+    setSelectedFile(null);
+    callback();
+  };
+  const itemTemplate = (file1, props1) => {
+    return (
+      <div className="flex flex-wrap align-items-center">
+        <div className="flex  align-items-center gap-3" style={{ width: '60%' }}>
+          <img alt={file1.name} role="presentation" src={file1.objectURL} width={100} />
+          <span className="flex flex-column text-left ml-3">
+            {file1.name}
+            <small>{new Date().toLocaleDateString()}</small>
+          </span>
+        </div>
+        <Tag value={props1.formatSize} severity="warning" className="px-4 py-3" />
+
+        <Button
+          type="button"
+          icon="pi pi-times"
+          className=" p-button-outlined p-button-rounded p-button-danger ml-3 p-3"
+          onClick={() => onTemplateRemove(file1, props1.onRemove)}
+        />
+      </div>
+    );
+  };
+
+  const emptyTemplate = () => {
+    return (
+      <div className="flex align-items-center flex-column">
+        <span style={{ fontSize: '1.2em', color: 'var(--text-color-secondary)' }} className="my-5">
+          Puede arrastrar y soltar el icono para Modificar
+        </span>
+      </div>
+    );
+  };
   useEffect(() => {
     const numero = idea.likes?.length;
 
@@ -97,10 +200,11 @@ const ComponenteIdea = props => {
 
   useEffect(() => {
     if (updateSuccessIdea)
-      if (idea.id === id) {
+      if (idea.id === id && !props.reto.publico) {
+        borrar(idea.fotoContentType);
         dispatch(getEntitiesbyReto(props.idReto));
-        setIdeaDialog(false);
       }
+    setIdeaDialog(false);
   }, [updateSuccessIdea]);
 
   useEffect(() => {
@@ -144,8 +248,9 @@ const ComponenteIdea = props => {
       reto: props.reto,
       tipoIdea: props.tipoIdeass.find(it => it.id.toString() === values.tipoIdea.toString()),
       entidad: props.entidades.find(it => it.id.toString() === values.entidad.toString()),
+      fotoContentType: selectedFile ? selectedFile.name : values.fotoContentType,
     };
-
+    selectedFile && fileUploadRef.current.upload();
     dispatch(actualizarIdea(entity));
     setID(idea.id);
   };
@@ -191,6 +296,7 @@ const ComponenteIdea = props => {
 
   const actualizarIdeas = () => {
     setIdeaDialog(true);
+    setSelectedFile(null);
   };
 
   const saveEntity = () => {
@@ -232,16 +338,38 @@ const ComponenteIdea = props => {
   };
 
   const hacerPublicaIdea = () => {
-    const entity = {
-      ...idea,
-      publica: !idea.publica,
-    };
+    if (props.reto.user?.id === props.usuarioo?.id) {
+      const entity = {
+        ...idea,
+        publica: !idea.publica,
+      };
 
-    if (props.reto.publico) {
-      dispatch(actualizarIdea(entity));
-      setID(idea.id);
+      if (props.reto.publico) {
+        dispatch(actualizarIdea(entity));
+        setID(idea.id);
+      }
     }
   };
+  const hideDeleteIdeaDialog = () => {
+    setDeleteIdeaDialog(false);
+  };
+  const borrarIdea = () => {
+    setDeleteIdeaDialog(true);
+  };
+  const borrarIdeaD = () => {
+    borrar(idea.fotoContentType);
+    dispatch(deleteIdea(idea.id));
+    setDeleteIdeaDialog(false);
+  };
+  const [deleteIdeaDialog, setDeleteIdeaDialog] = useState(false);
+  const deleteIdeaDialogFooter = (
+    <>
+      <Button label="No" icon="pi pi-times" className="p-button-text" onClick={hideDeleteIdeaDialog} />
+
+      <Button label="Sí" icon="pi pi-check" className="p-button-text" onClick={borrarIdeaD} />
+    </>
+  );
+
   const renderDevRibbon = () => (props.idea.aceptada === true ? <div className="curso1"></div> : null);
 
   return (
@@ -252,12 +380,12 @@ const ComponenteIdea = props => {
 
           <img
             className="w-16rem h-10rem  shadow-2 block xl:block  border-round"
-            src={`data:${idea.fotoContentType};base64,${idea.foto}`}
+            src={`content/uploads/${idea.fotoContentType}`}
             alt={idea.titulo}
           />
         </div>
         <div className="text-xl font-bold text-900">{idea.titulo}</div>
-        <div className="text-1xl  text-600 ">Autor: {idea.autor}</div>
+        {idea.user.id === props.usuarioo.id && <div className="text-1xl  text-600 ">Autor: {idea.autor}</div>}
         <div className="text-1xl  text-600 ">Tipo Idea: {idea.tipoIdea?.tipoIdea}</div>
 
         <div className="flex flex-column align-content-end align-items-center sm:align-items-start gap-3">
@@ -271,9 +399,14 @@ const ComponenteIdea = props => {
         <div className="flex absolute bottom-0 left-0 mb-8 ml-5">
           <Tag className="manito" onClick={hacerPublicaIdea} value={getActivo(idea)} severity={getSeverity(idea)}></Tag>
         </div>
-        {idea.user?.id === props.usuarioo?.id && (
+        {idea.user?.id === props.usuarioo?.id && !props.reto.publico && (
           <div className="flex justify-content-start flex-wrap  absolute top-0 right-0 mt-2 mr-4">
             <Button onClick={actualizarIdeas} label="Editar" className="p-button-link" icon="pi pi-pencil" />
+          </div>
+        )}
+        {(idea.user?.id === props.usuarioo?.id || props.reto.user?.id === props.usuarioo?.id) && (
+          <div className="flex align-items-center justify-content-end  absolute top-0 left-0 ml-3 mt-3 ">
+            <Button icon="pi pi-trash" className="p-button-danger" style={{ width: '25px', height: '25px' }} onClick={borrarIdea} />
           </div>
         )}
 
@@ -314,7 +447,7 @@ const ComponenteIdea = props => {
               onClick={megusta}
               className={!gusta ? 'p-button-sm p-button-rounded p-button-secondary ' : 'p-button-sm p-button-rounded p-button-info '}
               aria-label="Bookmark"
-              disabled={!props.reto.publico}
+              disabled={!props.reto.publico || props.usuarioo?.id === props.reto.user?.id}
             />
           </div>
         </div>
@@ -329,12 +462,33 @@ const ComponenteIdea = props => {
           </Link>
         </div>
       </div>
-      <Dialog visible={ideaDialog} style={{ width: '450px' }} header="Idea" modal onHide={hideIdeaDialog}>
+      <Dialog visible={ideaDialog} style={{ width: '500px' }} header="Idea" modal onHide={hideIdeaDialog}>
         <Row className="justify-content-center">
           {loadingIdea ? (
             <p>Cargando...</p>
           ) : (
             <ValidatedForm defaultValues={defaultValuesIdeas()} onSubmit={saveIdea}>
+              <ValidatedField name="fotoContentType" data-cy="fotoContentType" required readOnly hidden id="fotoContentType" type="text" />
+              <FileUpload
+                ref={fileUploadRef}
+                name="demo[1]"
+                accept="image/*"
+                maxFileSize={1000000}
+                chooseLabel="Suba la imagen nueva"
+                uploadLabel="Modificar"
+                onSelect={onTemplateSelect}
+                onUpload={onUpload}
+                customUpload
+                uploadHandler={handleFileUpload}
+                headerTemplate={headerTemplate}
+                itemTemplate={itemTemplate}
+                invalidFileSizeMessageSummary="Tamaño del archivo no válido"
+                invalidFileSizeMessageDetail="El tamaño máximo de carga es de 1MB"
+                emptyTemplate={emptyTemplate}
+                chooseOptions={chooseOptions}
+                uploadOptions={uploadOptions}
+                cancelOptions={cancelOptions}
+              />
               <ValidatedField
                 label={translate('jhipsterApp.idea.numeroRegistro')}
                 id="idea-numeroRegistro"
@@ -386,22 +540,16 @@ const ComponenteIdea = props => {
                   required: { value: true, message: translate('entity.validation.required') },
                 }}
               />
-              <ValidatedBlobField
-                label={translate('jhipsterApp.idea.foto')}
-                id="idea-foto"
-                name="foto"
-                data-cy="foto"
-                isImage
-                accept="image/*"
-              />
-              <ValidatedField
-                label={translate('jhipsterApp.idea.publica')}
-                id="idea-publica"
-                name="publica"
-                data-cy="publica"
-                check
-                type="checkbox"
-              />
+              {props.reto?.user?.id === props.usuarioo?.id && (
+                <ValidatedField
+                  label={translate('jhipsterApp.idea.publica')}
+                  id="idea-publica"
+                  name="publica"
+                  data-cy="publica"
+                  check
+                  type="checkbox"
+                />
+              )}
               <ValidatedField
                 id="idea-tipoIdea"
                 name="tipoIdea"
@@ -435,14 +583,40 @@ const ComponenteIdea = props => {
                   : null}
               </ValidatedField>
               &nbsp;
-              <Button color="primary" id="save-entity" data-cy="entityCreateSaveButton" type="submit" disabled={updatingIdea}>
-                <FontAwesomeIcon icon="save" />
-                &nbsp;
-                <Translate contentKey="entity.action.save">Save</Translate>
+              <Button
+                className="w-full"
+                color="primary"
+                id="save-entity"
+                data-cy="entityCreateSaveButton"
+                type="submit"
+                disabled={updatingIdea}
+              >
+                <span className="m-auto">
+                  <FontAwesomeIcon icon="save" />
+                  &nbsp;
+                  <Translate contentKey="entity.action.save">Save</Translate>
+                </span>
               </Button>
             </ValidatedForm>
           )}
         </Row>
+      </Dialog>
+      <Dialog
+        visible={deleteIdeaDialog}
+        style={{ width: '450px' }}
+        header="Confirmar"
+        modal
+        footer={deleteIdeaDialogFooter}
+        onHide={hideDeleteIdeaDialog}
+      >
+        <div className="flex align-items-center justify-content-center">
+          <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
+          {idea && (
+            <span>
+              ¿Seguro que quiere eliminar la idea: <b>{idea.titulo}</b>?
+            </span>
+          )}
+        </div>
       </Dialog>
     </div>
   );

@@ -29,7 +29,13 @@ export const Home = ({ on }) => (
 export const Panel = ({ url, on, user }) => (
   <NavItem onClick={on}>
     <NavLink tag={Link} to={url} className="d-flex align-items-center">
-      <Avatar image={`content/uploads/${user.imageUrl}`} shape="circle" className="" style={{ width: '1.5rem', height: '1.5rem' }}></Avatar>
+      <Avatar
+        label={`${user.login}`}
+        image={`content/uploads/${user.imageUrl}`}
+        shape="circle"
+        className=""
+        style={{ width: '1.5rem', height: '1.5rem' }}
+      ></Avatar>
     </NavLink>
   </NavItem>
 );

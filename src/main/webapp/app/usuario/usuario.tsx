@@ -81,7 +81,7 @@ const Usuario = (props: RouteComponentProps<{ index: any }>) => {
         style={{ cursor: 'pointer' }}
         onClick={e => setActiveIndex(i)}
       >
-        <Avatar image={`data:${options.logoUrlContentType};base64,${options.logoUrl}`} shape="circle" className="ml-2" />
+        <Avatar image={`content/uploads/${options.logoUrlContentType}`} shape="circle" className="ml-2" />
         <h5 className="text-700 text-xl text-blue-600 font-medium  p-2 "> {options.nombre}</h5>
       </div>
     );

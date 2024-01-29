@@ -30,6 +30,17 @@ import { Translate, ValidatedBlobField, ValidatedField, ValidatedForm, translate
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Tag } from 'primereact/tag';
 
+import { Avatar } from 'primereact/avatar';
+import {
+  getEntity as getFile,
+  getEntities as getFiles,
+  createEntity as createFile,
+  reset as resetFile,
+  getArchivo,
+  deletefile,
+} from 'app/entities/Files/files.reducer';
+import { FileUpload } from 'primereact/fileupload';
+
 export const NoticiasCrud = (props: RouteComponentProps<{ id: string; index: string }>) => {
   const dispatch = useAppDispatch();
   const noticiasList = useAppSelector(state => state.noticias.entities);
@@ -68,23 +79,21 @@ export const NoticiasCrud = (props: RouteComponentProps<{ id: string; index: str
 
   const dt = useRef(null);
 
-  const [filters, setFilters] = useState({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    titulo: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-    descripcion: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-    fechaCreada: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
-    user: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-  });
+  const fileUploadRef = useRef(null);
+  const file = useAppSelector(state => state.files.entity);
+  const updatingFile = useAppSelector(state => state.files.updating);
+  const updateSuccessFile = useAppSelector(state => state.files.updateSuccess);
+  const loadingFile = useAppSelector(state => state.files.loading);
 
-  const onGlobalFilterChange = e => {
-    const value = e.target.value;
-    const _filters = { ...filters };
-    _filters['global'].value = value;
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [fileModificar, setfileModificar] = useState(null);
 
-    setFilters(_filters);
-    setGlobalFilterValue(value);
+  const borrar = icono => {
+    const consulta = deletefile(icono);
+    consulta.then(response => {
+      setNoticiasDialogNew(false);
+    });
   };
-
   useEffect(() => {
     if (isNew) {
       dispatch(reset());
@@ -102,6 +111,13 @@ export const NoticiasCrud = (props: RouteComponentProps<{ id: string; index: str
   }, []);
 
   useEffect(() => {
+    if (updateSuccess && isNew) setNoticiasDialogNew(false);
+
+    if (updateSuccess && !isNew) {
+      setfileModificar(null);
+      selectedFile && fileUploadRef.current.upload();
+      setNoticiasDialogNew(false);
+    }
     if (updateSuccess) {
       dispatch(
         getNoticiasByPublicabyEcosistemaIdbyUserId({
@@ -109,11 +125,115 @@ export const NoticiasCrud = (props: RouteComponentProps<{ id: string; index: str
           iduser: account.id,
         })
       );
-      setNew(true);
-
-      setNoticiasDialogNew(false);
     }
   }, [updateSuccess]);
+
+  useEffect(() => {
+    if (updateSuccessFile && !isNew) {
+      borrar(selectedNoticias.urlFotoContentType);
+    }
+  }, [updateSuccessFile]);
+
+  const handleFileUpload = event => {
+    const fileupload = event.files[0];
+    const formData = new FormData();
+    formData.append('files', selectedFile);
+    dispatch(createFile(formData));
+  };
+
+  const chooseOptions = {
+    icon: 'pi pi-fw pi-images',
+    className: 'custom-choose-btn p-button-rounded p-button-outlined',
+  };
+  const uploadOptions = {
+    icon: 'pi pi-fw pi-cloud-upload',
+
+    className: 'custom-upload-btn p-button-success p-button-rounded p-button-outlined p-3',
+  };
+
+  const cancelOptions = { label: 'Cancel', icon: 'pi pi-times', className: 'p-button-danger' };
+
+  const onUpload = e => {};
+
+  const onTemplateSelect = e => {
+    setSelectedFile(e.files[0]);
+  };
+
+  const iconoTemplate = rowData => {
+    return (
+      <>
+        <Avatar image={`content/uploads/${rowData.icono}`} shape="circle" className="p-overlay-badge " size="xlarge" />
+      </>
+    );
+  };
+
+  const headerTemplate = options => {
+    const { className, chooseButton, uploadButton, cancelButton } = options;
+
+    return (
+      <div className={className + ' relative'} style={{ backgroundColor: 'transparent', display: 'flex', alignItems: 'center' }}>
+        {chooseButton}
+      </div>
+    );
+  };
+  const onTemplateRemove = (file1, callback) => {
+    setSelectedFile(null);
+    callback();
+  };
+  const itemTemplate = (file1, props1) => {
+    return (
+      <div className="flex flex-wrap align-items-center">
+        <div className="flex  align-items-center gap-3" style={{ width: '60%' }}>
+          <img alt={file1.name} role="presentation" src={file1.objectURL} width={100} />
+          <span className="flex flex-column text-left ml-3">
+            {file1.name}
+            <small>{new Date().toLocaleDateString()}</small>
+          </span>
+        </div>
+        <Tag value={props1.formatSize} severity="warning" className="px-4 py-3" />
+
+        <Button
+          type="button"
+          icon="pi pi-times"
+          className=" p-button-outlined p-button-rounded p-button-danger ml-3 p-3"
+          onClick={() => onTemplateRemove(file1, props1.onRemove)}
+        />
+      </div>
+    );
+  };
+
+  const emptyTemplate = () => {
+    return (
+      <div className="flex align-items-center flex-column">
+        {isNew ? (
+          <span style={{ fontSize: '1.2em', color: 'var(--text-color-secondary)' }} className="my-5">
+            Puede arrastrar y soltar el icono aquí
+          </span>
+        ) : (
+          <span style={{ fontSize: '1.2em', color: 'var(--text-color-secondary)' }} className="my-5">
+            Puede arrastrar y soltar el icono para Modificar
+          </span>
+        )}
+      </div>
+    );
+  };
+
+  const [filters, setFilters] = useState({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    titulo: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    descripcion: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    fechaCreada: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
+    user: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+  });
+
+  const onGlobalFilterChange = e => {
+    const value = e.target.value;
+    const _filters = { ...filters };
+    _filters['global'].value = value;
+
+    setFilters(_filters);
+    setGlobalFilterValue(value);
+  };
 
   const atras = () => {
     props.history.push(`/usuario-panel/${props.match.params.index}`);
@@ -202,10 +322,12 @@ export const NoticiasCrud = (props: RouteComponentProps<{ id: string; index: str
       ...values,
       user: account,
       ecosistema: ecosistemaEntity,
+      urlFotoContentType: selectedFile ? selectedFile.name : values.urlFotoContentType,
       tipoNoticia: tipoNoticias.find(it => it.id.toString() === values.tipoNoticia.toString()),
     };
 
     if (isNew) {
+      fileUploadRef.current.upload();
       dispatch(createEntity(entity));
     } else {
       dispatch(updateEntity(entity));
@@ -329,14 +451,37 @@ export const NoticiasCrud = (props: RouteComponentProps<{ id: string; index: str
                         validate={{ required: true }}
                       />
                     ) : null}
-                    <ValidatedBlobField
-                      label={translate('jhipsterApp.noticias.urlFoto')}
-                      id="noticias-urlFoto"
-                      name="urlFoto"
-                      data-cy="urlFoto"
-                      isImage
-                      accept="image/*"
+
+                    <ValidatedField
+                      name="urlFotoContentType"
+                      data-cy="urlFotoContentType"
+                      required
+                      readOnly
+                      id="urlFotoContentType"
+                      type="text"
                     />
+
+                    <FileUpload
+                      ref={fileUploadRef}
+                      name="demo[1]"
+                      accept="image/*"
+                      maxFileSize={1000000}
+                      chooseLabel={isNew ? 'Suba la imagen' : 'Suba la imagen nueva'}
+                      uploadLabel="Modificar"
+                      onSelect={onTemplateSelect}
+                      onUpload={onUpload}
+                      customUpload
+                      uploadHandler={handleFileUpload}
+                      headerTemplate={headerTemplate}
+                      itemTemplate={itemTemplate}
+                      invalidFileSizeMessageSummary="Tamaño del archivo no válido"
+                      invalidFileSizeMessageDetail="El tamaño máximo de carga es de 1MB"
+                      emptyTemplate={emptyTemplate}
+                      chooseOptions={chooseOptions}
+                      uploadOptions={uploadOptions}
+                      cancelOptions={cancelOptions}
+                    />
+
                     <ValidatedField
                       label={translate('jhipsterApp.noticias.titulo')}
                       id="noticias-titulo"

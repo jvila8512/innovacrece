@@ -149,7 +149,8 @@ const VistaprincipalIdeaReto11 = (
               <h1 className="text-6xl font-bold text-gray-900 line-height-2">
                 <span className="font-light block">{ideaEntity.titulo}</span>
               </h1>
-              <p className="font-normal text-2xl line-height-3 md:mt-3 text-gray-700">Autor: {ideaEntity.autor}</p>
+              {ideaEntity.user?.id === account.id && <div className="text-1xl  text-600 ">Autor: {ideaEntity.autor}</div>}
+
               <p className="font-normal text-2xl line-height-3 md:mt-3 text-gray-700">
                 Fecha Inscripción:{' '}
                 {ideaEntity.fechaInscripcion ? (
@@ -172,7 +173,7 @@ const VistaprincipalIdeaReto11 = (
               </span>
               {reto.user?.id === account.id && (
                 <Button
-                  label="Aceptar"
+                  label={ideaEntity.aceptada ? 'No Aceptar' : 'Aceptar'}
                   icon={ideaEntity.aceptada ? 'pi pi-thumbs-down ' : ' pi pi-thumbs-up-fill'}
                   className={ideaEntity.aceptada ? 'p-button-danger mr-2 mt-2' : 'p-button-success mr-2 mt-2'}
                   onClick={saveEntity}
@@ -189,7 +190,7 @@ const VistaprincipalIdeaReto11 = (
               <Skeleton width="35rem" height="30rem"></Skeleton>
             ) : (
               <img
-                src={`data:${ideaEntity.fotoContentType};base64,${ideaEntity.foto}`}
+                src={`content/uploads/${ideaEntity.fotoContentType}`}
                 style={{ maxHeight: '500px' }}
                 className=" flex w-9 sm:w-8 sm:justify-content-center md:w-10 xl:w-10 shadow-2 block xl:block mt-4 border-round"
               />

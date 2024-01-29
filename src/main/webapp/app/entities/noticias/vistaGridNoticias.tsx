@@ -104,12 +104,12 @@ const VistaGridNoticias = (props: RouteComponentProps<{ id: string; index: strin
   const gridItem = reto => {
     return (
       <div className="flex md:justify-content-center sm:justify-content-center col-12 sm:col-12 md:col-6 lg:col-6 xl:col-3 ">
-        <div className="h-26rem w-24rem max-w-30rem max-h-30rem p-4 border-round-xl shadow-4 mb-2 relative ">
+        <div className="h-30rem w-24rem max-w-30rem max-h-30rem p-4 border-round-xl shadow-4 mb-2 relative ">
           <div className="flex flex-column justify-content-center align-items-center ">
             <Link to={`/entidad/noticias/ver-noticias`} id="jh-tre" data-cy="noticia">
               <img
                 className="w-9 h-9 md:w-12rem xl:w-14rem lg:w-14rem md:w-12rem sm:h-12rem xl:h-10rem lg:h-14rem md:h-12rem shadow-2  border-round"
-                src={`data:${reto.urlFotoContentType};base64,${reto.urlFoto}`}
+                src={`content/uploads/${reto.urlFotoContentType}`}
                 alt={reto.titulo}
               />
             </Link>

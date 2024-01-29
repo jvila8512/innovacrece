@@ -19,6 +19,17 @@ import { IEcosistema } from 'app/shared/model/ecosistema.model';
 import { getEntity as getEcosistema } from 'app/entities/ecosistema/ecosistema.reducer';
 import { IEcosistemaComponente } from 'app/shared/model/ecosistema-componente.model';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Avatar } from 'primereact/avatar';
+import {
+  getEntity as getFile,
+  getEntities as getFiles,
+  createEntity as createFile,
+  reset as resetFile,
+  getArchivo,
+  deletefile,
+} from 'app/entities/Files/files.reducer';
+import { FileUpload } from 'primereact/fileupload';
+import { Tag } from 'primereact/tag';
 
 const ComponentesCrud = (props: RouteComponentProps<{ id: string; index: string }>) => {
   const dispatch = useAppDispatch();
@@ -60,14 +71,123 @@ const ComponentesCrud = (props: RouteComponentProps<{ id: string; index: string 
   }, []);
 
   useEffect(() => {
-    if (updateSuccess) {
+    if (updateSuccess && isNew) setComponenteDialogNew(false);
+
+    if (updateSuccess && !isNew) {
+      setfileModificar(null);
+      selectedFile && fileUploadRef.current.upload();
       setComponenteDialogNew(false);
-      setNew(false);
-      dispatch(getComponentesbyEcosistema(props.match.params.id));
-      dispatch(reset());
     }
+    dispatch(getComponentesbyEcosistema(props.match.params.id));
   }, [updateSuccess]);
+
   const { match } = props;
+
+  const fileUploadRef = useRef(null);
+  const file = useAppSelector(state => state.files.entity);
+  const updatingFile = useAppSelector(state => state.files.updating);
+  const updateSuccessFile = useAppSelector(state => state.files.updateSuccess);
+  const loadingFile = useAppSelector(state => state.files.loading);
+
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [fileModificar, setfileModificar] = useState(null);
+
+  const borrar = icono => {
+    const consulta = deletefile(icono);
+    consulta.then(response => {
+      setComponenteDialogNew(false);
+    });
+  };
+
+  useEffect(() => {
+    if (updateSuccessFile && !isNew) {
+      borrar(selectedComponente.documentoUrlContentType);
+    }
+  }, [updateSuccessFile]);
+
+  const handleFileUpload = event => {
+    const fileupload = event.files[0];
+    const formData = new FormData();
+    formData.append('files', selectedFile);
+    dispatch(createFile(formData));
+  };
+
+  const chooseOptions = {
+    icon: 'pi pi-fw pi-images',
+    className: 'custom-choose-btn p-button-rounded p-button-outlined',
+  };
+  const uploadOptions = {
+    icon: 'pi pi-fw pi-cloud-upload',
+
+    className: 'custom-upload-btn p-button-success p-button-rounded p-button-outlined p-3',
+  };
+
+  const cancelOptions = { label: 'Cancel', icon: 'pi pi-times', className: 'p-button-danger' };
+
+  const onUpload = e => {};
+
+  const onTemplateSelect = e => {
+    setSelectedFile(e.files[0]);
+  };
+
+  const iconoTemplate = rowData => {
+    return (
+      <>
+        <Avatar image={`content/uploads/${rowData.icono}`} shape="circle" className="p-overlay-badge " size="xlarge" />
+      </>
+    );
+  };
+
+  const headerTemplate = options => {
+    const { className, chooseButton, uploadButton, cancelButton } = options;
+
+    return (
+      <div className={className + ' relative'} style={{ backgroundColor: 'transparent', display: 'flex', alignItems: 'center' }}>
+        {chooseButton}
+      </div>
+    );
+  };
+  const onTemplateRemove = (file1, callback) => {
+    setSelectedFile(null);
+    callback();
+  };
+  const itemTemplate = (file1, props1) => {
+    return (
+      <div className="flex flex-wrap align-items-center">
+        <div className="flex  align-items-center gap-3" style={{ width: '60%' }}>
+          <img alt={file1.name} role="presentation" src={file1.objectURL} width={100} />
+          <span className="flex flex-column text-left ml-3">
+            {file1.name}
+            <small>{new Date().toLocaleDateString()}</small>
+          </span>
+        </div>
+        <Tag value={props1.formatSize} severity="warning" className="px-4 py-3" />
+
+        <Button
+          type="button"
+          icon="pi pi-times"
+          className=" p-button-outlined p-button-rounded p-button-danger ml-3 p-3"
+          onClick={() => onTemplateRemove(file1, props1.onRemove)}
+        />
+      </div>
+    );
+  };
+
+  const emptyTemplate = () => {
+    return (
+      <div className="flex align-items-center flex-column">
+        {isNew ? (
+          <span style={{ fontSize: '1.2em', color: 'var(--text-color-secondary)' }} className="my-5">
+            Puede arrastrar y soltar aquí
+          </span>
+        ) : (
+          <span style={{ fontSize: '1.2em', color: 'var(--text-color-secondary)' }} className="my-5">
+            Puede arrastrar y soltar el documento para Modificar
+          </span>
+        )}
+      </div>
+    );
+  };
 
   const atras = () => {
     props.history.push(`/usuario-panel/${props.match.params.index}`);
@@ -98,7 +218,7 @@ const ComponentesCrud = (props: RouteComponentProps<{ id: string; index: string 
     );
   };
   const header = (
-    <div className="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
+    <div className="flex flex-column md:flex-row  md:align-items-start">
       <h3 className="m-0 text-700 text-xl text-blue-600 font-medium ">Componentes del Ecosistema: {ecosistemaEntity.nombre}</h3>
     </div>
   );
@@ -108,13 +228,26 @@ const ComponentesCrud = (props: RouteComponentProps<{ id: string; index: string 
   const componenteBodyTemplate = rowData => {
     return <>{rowData.componentehijo}</>;
   };
+  const handleFileDownload = (base64Data, fileName) => {
+    const linkk = document.createElement('a');
+    linkk.setAttribute('href', 'data:aplication/pdf;base64,' + base64Data);
+    linkk.setAttribute('download', fileName);
+    document.body.appendChild(linkk);
+    linkk.click();
+  };
+
+  const descargarDocumento = row => {
+    const retosFiltrar = getArchivo(row.documentoUrlContentType);
+    retosFiltrar.then(response => {
+      handleFileDownload(response.data, row.documentoUrlContentType);
+    });
+  };
+
   const documentoBodyTemplate = rowData => {
     return (
       <>
         {rowData.documentoUrlContentType ? (
-          <a className="text-blue" onClick={openFile(rowData.documentoUrlContentType, rowData.documentoUrl)}>
-            Descargar
-          </a>
+          <Button label="Descargar" className="p-button-secondary p-button-text" onClick={() => descargarDocumento(rowData)} />
         ) : null}
       </>
     );
@@ -163,9 +296,11 @@ const ComponentesCrud = (props: RouteComponentProps<{ id: string; index: string 
       ...values,
       componente: componentes.find(it => it.id.toString() === values.componente.toString()),
       ecosistema: ecosistemaEntity,
+      documentoUrlContentType: selectedFile ? selectedFile.name : values.documentoUrlContentType,
     };
 
     if (isNew) {
+      fileUploadRef.current.upload();
       dispatch(createEntity(entity));
     } else {
       dispatch(updateEntity(entity));
@@ -316,14 +451,34 @@ const ComponentesCrud = (props: RouteComponentProps<{ id: string; index: string 
                           'La URL debe comenzar con "https:// o http://" y tener un dominio válido',
                       }}
                     />
-                    <ValidatedBlobField
-                      label={translate('jhipsterApp.ecosistemaComponente.documentoUrl')}
-                      id="ecosistema-componente-documentoUrl"
-                      name="documentoUrl"
-                      data-cy="documentoUrl"
-                      isImage
-                      openActionLabel={translate('entity.action.open')}
-                      accept="file/*"
+                    <ValidatedField
+                      name="documentoUrlContentType"
+                      data-cy="documentoUrlContentType"
+                      required
+                      readOnly
+                      hidden
+                      id="documentoUrlContentType"
+                      type="text"
+                    />
+                    <FileUpload
+                      ref={fileUploadRef}
+                      name="demo[1]"
+                      accept="application/pdf"
+                      maxFileSize={1000000}
+                      chooseLabel={isNew ? 'Suba el documento' : 'Suba el documento nuevo'}
+                      uploadLabel="Modificar"
+                      onSelect={onTemplateSelect}
+                      onUpload={onUpload}
+                      customUpload
+                      uploadHandler={handleFileUpload}
+                      headerTemplate={headerTemplate}
+                      itemTemplate={itemTemplate}
+                      invalidFileSizeMessageSummary="Tamaño del archivo no válido"
+                      invalidFileSizeMessageDetail="El tamaño máximo de carga es de 1MB"
+                      emptyTemplate={emptyTemplate}
+                      chooseOptions={chooseOptions}
+                      uploadOptions={uploadOptions}
+                      cancelOptions={cancelOptions}
                     />
                     <ValidatedField
                       id="ecosistema-componente-componente"

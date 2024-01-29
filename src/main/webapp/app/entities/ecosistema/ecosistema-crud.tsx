@@ -34,6 +34,15 @@ import { contarRetosbyEcosistemas } from '../../entities/reto/reto.reducer';
 import { contarNoticiasbyEcosistemas } from '../../entities/noticias/noticias.reducer';
 import { contarProyectosbyEcosistemas } from '../../entities/proyectos/proyectos.reducer';
 import { Avatar } from 'primereact/avatar';
+import {
+  getEntity as getFile,
+  getEntities as getFiles,
+  createEntity as createFile,
+  reset as resetFile,
+  getArchivo,
+  deletefile,
+} from 'app/entities/Files/files.reducer';
+import { FileUpload } from 'primereact/fileupload';
 
 const EcosistemaCrud = (props: RouteComponentProps<{ id: string }>) => {
   const dispatch = useAppDispatch();
@@ -58,6 +67,14 @@ const EcosistemaCrud = (props: RouteComponentProps<{ id: string }>) => {
   const [ecosistemaDialogNew, setEcosistemaDialogNew] = useState(false);
   const [deleteEcosistemaDialog, setDeleteEcosistemaDialog] = useState(false);
   const [gestorDialog, setGestorDialog] = useState(false);
+
+  const fileUploadRef = useRef(null);
+  const file = useAppSelector(state => state.files.entity);
+  const updatingFile = useAppSelector(state => state.files.updating);
+  const updateSuccessFile = useAppSelector(state => state.files.updateSuccess);
+  const loadingFile = useAppSelector(state => state.files.loading);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [fileModificar, setfileModificar] = useState(null);
 
   const handleClose = () => {
     props.history.push('/ecosistema');
@@ -163,7 +180,7 @@ const EcosistemaCrud = (props: RouteComponentProps<{ id: string }>) => {
   const imageBodyTemplate = rowData => {
     return (
       <>
-        <img src={`data:${rowData.urlFotoContentType};base64,${rowData.urlFoto}`} style={{ maxHeight: '30px' }} />
+        <img src={`content/uploads/${rowData.urlFotoContentType}`} style={{ maxHeight: '30px' }} />
       </>
     );
   };
@@ -182,6 +199,8 @@ const EcosistemaCrud = (props: RouteComponentProps<{ id: string }>) => {
   const verDialogNuevo = () => {
     setEcosistemaDialogNew(true);
     setNew(true);
+    setSelectedFile(null);
+    dispatch(resetFile());
   };
 
   const rightToolbarTemplate = () => {
@@ -240,6 +259,7 @@ const EcosistemaCrud = (props: RouteComponentProps<{ id: string }>) => {
     setSelectedEcosistema(retoact);
     setEcosistemaDialogNew(true);
     setNew(false);
+    setSelectedFile(null);
     setSelectedAdmin(buscarUserAdmin(retoact.user));
     const retos = contarRetosbyEcosistemas(retoact.id);
     retos.then(response => {
@@ -300,6 +320,7 @@ const EcosistemaCrud = (props: RouteComponentProps<{ id: string }>) => {
       usuariosCant: 0,
       retosCant: 0,
       ideasCant: 0,
+      logoUrlContentType: selectedFile && selectedFile.name,
       ecosistemaRol: ecosistemaRols.find(it => it.id.toString() === values.ecosistemaRol.toString()),
       user: selectedAdmin ? selectedAdmin : account,
     };
@@ -307,11 +328,13 @@ const EcosistemaCrud = (props: RouteComponentProps<{ id: string }>) => {
       ...ecosistemaEntity,
       ...values,
       retosCant: reto,
+      logoUrlContentType: selectedFile ? selectedFile.name : values.logo,
       ecosistemaRol: ecosistemaRols.find(it => it.id.toString() === values.ecosistemaRol.toString()),
       user: selectedAdmin ? selectedAdmin : account,
     };
 
     if (isNew) {
+      fileUploadRef.current.upload();
       dispatch(createEntity(entity));
     } else {
       dispatch(updateEntity(entity1));
@@ -319,16 +342,32 @@ const EcosistemaCrud = (props: RouteComponentProps<{ id: string }>) => {
   };
 
   useEffect(() => {
+    if (updateSuccess && !isNew) {
+      setfileModificar(null);
+      selectedFile && fileUploadRef.current.upload();
+      setEcosistemaDialogNew(false);
+    }
     if (updateSuccess) {
       setEcosistemaDialogNew(false);
-      setSelectedEcosistema(null);
-      setNew(true);
       setSelectedEcosistemaUsuario(null);
       setSelectedAdmin(null);
       setselectedEcosistemaFiltradoSelecionado(false);
-      dispatch(reset());
     }
   }, [updateSuccess]);
+
+  const borrar = icono => {
+    const consulta = deletefile(icono);
+    consulta.then(response => {
+      setDeleteEcosistemaDialog(false);
+    });
+  };
+
+  useEffect(() => {
+    if (updateSuccessFile && !isNew) {
+      borrar(selectedEcosistema.logoUrlContentType);
+      setSelectedEcosistema(null);
+    }
+  }, [updateSuccessFile]);
 
   const hideDeleteEcosistemaDialog = () => {
     setDeleteEcosistemaDialog(false);
@@ -340,7 +379,9 @@ const EcosistemaCrud = (props: RouteComponentProps<{ id: string }>) => {
   const deleteEcosistema = () => {
     dispatch(deleteEntity(selectedEcosistema.id));
     setDeleteEcosistemaDialog(false);
+    borrar(selectedEcosistema.logoUrlContentType);
     setSelectedEcosistema(null);
+    setSelectedFile(null);
   };
 
   const ActualizarUsuarioEcosistema = () => {
@@ -462,6 +503,89 @@ const EcosistemaCrud = (props: RouteComponentProps<{ id: string }>) => {
       </div>
     );
   };
+
+  const onUpload = e => {};
+
+  const onTemplateSelect = e => {
+    setSelectedFile(e.files[0]);
+  };
+
+  const iconoTemplate = rowData => {
+    return (
+      <>
+        <Avatar image={`content/uploads/${rowData.icono}`} shape="circle" className="p-overlay-badge " size="xlarge" />
+      </>
+    );
+  };
+
+  const headerTemplate = options => {
+    const { className, chooseButton, uploadButton, cancelButton } = options;
+
+    return (
+      <div className={className + ' relative'} style={{ backgroundColor: 'transparent', display: 'flex', alignItems: 'center' }}>
+        {chooseButton}
+      </div>
+    );
+  };
+
+  const onTemplateRemove = (file1, callback) => {
+    setSelectedFile(null);
+    callback();
+  };
+  const itemTemplate = (file1, props1) => {
+    return (
+      <div className="flex flex-wrap align-items-center">
+        <div className="flex  align-items-center gap-3" style={{ width: '60%' }}>
+          <img alt={file1.name} role="presentation" src={file1.objectURL} width={100} />
+          <span className="flex flex-column text-left ml-3">
+            {file1.name}
+            <small>{new Date().toLocaleDateString()}</small>
+          </span>
+        </div>
+        <Tag value={props1.formatSize} severity="warning" className="px-4 py-3" />
+
+        <Button
+          type="button"
+          icon="pi pi-times"
+          className=" p-button-outlined p-button-rounded p-button-danger ml-3 p-3"
+          onClick={() => onTemplateRemove(file1, props1.onRemove)}
+        />
+      </div>
+    );
+  };
+
+  const emptyTemplate = () => {
+    return (
+      <div className="flex align-items-center flex-column">
+        {isNew ? (
+          <span style={{ fontSize: '1.2em', color: 'var(--text-color-secondary)' }} className="my-5">
+            Puede arrastrar y soltar el icono aquí
+          </span>
+        ) : (
+          <span style={{ fontSize: '1.2em', color: 'var(--text-color-secondary)' }} className="my-5">
+            Puede arrastrar y soltar el icono para Modificar
+          </span>
+        )}
+      </div>
+    );
+  };
+  const handleFileUpload = event => {
+    const fileupload = event.files[0];
+    const formData = new FormData();
+    formData.append('files', selectedFile);
+    dispatch(createFile(formData));
+  };
+  const chooseOptions = {
+    icon: 'pi pi-fw pi-images',
+    className: 'custom-choose-btn p-button-rounded p-button-outlined',
+  };
+  const uploadOptions = {
+    icon: 'pi pi-fw pi-cloud-upload',
+
+    className: 'custom-upload-btn p-button-success p-button-rounded p-button-outlined p-3',
+  };
+
+  const cancelOptions = { label: 'Cancel', icon: 'pi pi-times', className: 'p-button-danger' };
   return (
     <div className="grid crud-demo mt-3 mb-4">
       <div className="col-12">
@@ -558,17 +682,34 @@ const EcosistemaCrud = (props: RouteComponentProps<{ id: string }>) => {
                     check
                     type="checkbox"
                   />
-                  <ValidatedBlobField
-                    label={translate('jhipsterApp.ecosistema.logoUrl')}
-                    id="ecosistema-logoUrl"
-                    name="logoUrl"
-                    data-cy="logoUrl"
-                    isImage
+                  <ValidatedField
+                    name="logoUrlContentType"
+                    data-cy="logoUrlContentType"
+                    required
+                    readOnly
+                    hidden
+                    id="logoUrlContentType"
+                    type="text"
+                  />
+                  <FileUpload
+                    ref={fileUploadRef}
+                    name="demo[1]"
                     accept="image/*"
-                    validate={{
-                      required: { value: true, message: 'La imagen es requerida' },
-                      validate: v => (v && v.size > 1 * 1024 * 1024) || 'La imagen es muy grande',
-                    }}
+                    maxFileSize={1000000}
+                    chooseLabel={isNew ? 'Suba el Icono' : 'Suba el Icono nuevo'}
+                    uploadLabel="Modificar"
+                    onSelect={onTemplateSelect}
+                    onUpload={onUpload}
+                    customUpload
+                    uploadHandler={handleFileUpload}
+                    headerTemplate={headerTemplate}
+                    itemTemplate={itemTemplate}
+                    invalidFileSizeMessageSummary="Tamaño del archivo no válido"
+                    invalidFileSizeMessageDetail="El tamaño máximo de carga es de 1MB"
+                    emptyTemplate={emptyTemplate}
+                    chooseOptions={chooseOptions}
+                    uploadOptions={uploadOptions}
+                    cancelOptions={cancelOptions}
                   />
                   <ValidatedField
                     id="ecosistema-ecosistemaRol"
@@ -605,7 +746,13 @@ const EcosistemaCrud = (props: RouteComponentProps<{ id: string }>) => {
                     itemTemplate={adminOptionTemplate}
                   />
                   &nbsp;
-                  <Button color="primary" id="save-entity" data-cy="entityCreateSaveButton" type="submit" disabled={updating}>
+                  <Button
+                    color="primary"
+                    id="save-entity"
+                    data-cy="entityCreateSaveButton"
+                    type="submit"
+                    disabled={updating || (!selectedFile && isNew)}
+                  >
                     <span className="m-auto pl-2">
                       <FontAwesomeIcon icon="save" />
                       &nbsp;

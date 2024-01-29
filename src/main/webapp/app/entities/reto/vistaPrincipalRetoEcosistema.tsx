@@ -31,7 +31,6 @@ const VistaPrincipal = props => {
   const [retos, setRetos] = useState([]);
 
   useEffect(() => {
-    dispatch(reset());
     dispatch(
       getEntitiesByEcosistema1({
         id: props.id,
@@ -84,7 +83,10 @@ const VistaPrincipal = props => {
           <div className="flex flex-column ">
             <img
               className="w-10rem h-8rem sm:w-10rem xl:w-10rem shadow-2 block xl:block mx-auto border-round"
-              src={`data:${reto.urlFotoContentType};base64,${reto.urlFoto}`}
+              src={`content/uploads/${reto.urlFotoContentType}
+              
+              
+              `}
               alt={reto.reto}
             />
           </div>

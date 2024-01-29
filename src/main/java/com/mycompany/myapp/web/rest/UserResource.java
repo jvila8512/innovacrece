@@ -249,8 +249,8 @@ public class UserResource {
      */
     @GetMapping("/users/todos")
     @PreAuthorize("hasAuthority(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public List<UserDTO> getAllUsersTodos() {
-        return userService.getAllTodosUsers();
+    public List<AdminUserDTO> getAllUsersTodos() {
+        return userService.getAllTodosUsersDTO();
     }
 
     /**

@@ -78,7 +78,7 @@ const VistaPrincipalNoticia = props => {
         <div className="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
           <img
             className="w-10rem h-8rem sm:w-10rem xl:w-10rem shadow-2 block xl:block mx-auto border-round"
-            src={`data:${reto.urlFotoContentType};base64,${reto.urlFoto}`}
+            src={`content/uploads/${reto.urlFotoContentType}`}
             alt={reto.titulo}
           />
           <div className="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">

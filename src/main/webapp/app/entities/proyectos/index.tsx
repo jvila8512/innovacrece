@@ -17,7 +17,7 @@ const Routes = ({ match }) => (
       <ErrorBoundaryRoute exact path={`${match.url}/new`} component={ProyectosUpdate} />
       <ErrorBoundaryRoute exact path={`${match.url}/proyectos_buscar/:texto`} component={ProyectosBuscar} />
       <ErrorBoundaryRoute exact path={`${match.url}/proyectos_admin/:id`} component={ProyectosAdmin} />
-      <ErrorBoundaryRoute exact path={`${match.url}/proyectos_ecosistema/:id`} component={ProyectosEcosistemas} />
+      <ErrorBoundaryRoute exact path={`${match.url}/proyectos_ecosistema/:id/:index`} component={ProyectosEcosistemas} />
 
       <ErrorBoundaryRoute exact path={`${match.url}/:id/edit`} component={ProyectosUpdate} />
       <ErrorBoundaryRoute exact path={`${match.url}/:id`} component={ProyectosDetail} />

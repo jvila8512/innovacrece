@@ -12,9 +12,39 @@ import javax.validation.constraints.*;
  */
 public class UserDTO {
 
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
     private Long id;
 
     private String login;
+
+    private String firstName;
+
+    private String lastName;
+
+    private String imageUrl;
 
     private Set<String> authorities;
 

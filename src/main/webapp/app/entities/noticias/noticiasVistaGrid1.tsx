@@ -19,6 +19,7 @@ import { AxiosResponse } from 'axios';
 import { Toolbar } from 'primereact/toolbar';
 import { Button } from 'primereact/button';
 import { Skeleton } from 'primereact/skeleton';
+import SpinnerCar from '../loader/spinner';
 
 const noticiasVistaGrid1 = (props: RouteComponentProps<{ id: any; idecosistema: string; index: string }>) => {
   const dispatch = useAppDispatch();
@@ -49,46 +50,50 @@ const noticiasVistaGrid1 = (props: RouteComponentProps<{ id: any; idecosistema: 
     <>
       <div className="card mt-4 mb-4">
         <Toolbar className="mt-1 flex flex-row " left={leftToolbarTemplate}></Toolbar>
-
-        <div className="grid  grid-nogutter surface-0 text-800">
-          <div className="col-12 md:col-6">
-            <div className="flex p-4 sm:justify-content-center text-center md:text-left flex align-items-center ">
-              <section className="flex flex-column">
-                <h1 className="text-6xl font-bold text-gray-900 line-height-2">
-                  <span className="font-light block">{noticiasEntity.titulo}</span>
-                </h1>
-                <p className="font-normal text-2xl line-height-3  text-gray-700">
-                  Autor: {noticiasEntity?.user?.firstName + ' ' + noticiasEntity?.user?.lastName}
-                </p>
-                <p className="font-normal text-2xl line-height-3 text-gray-700">
-                  Fecha de creada:{' '}
-                  {noticiasEntity.fechaCreada ? (
-                    <TextFormat type="date" value={noticiasEntity.fechaCreada} format={APP_LOCAL_DATE_FORMAT} />
-                  ) : null}
-                </p>
-                <p className="font-normal text-2xl line-height-3 md:mt-3 text-gray-700">Ecosistema: {noticiasEntity?.ecosistema?.nombre}</p>
-                <br></br>
-              </section>
+        {loading ? (
+          <SpinnerCar />
+        ) : (
+          <div className="grid  grid-nogutter surface-0 text-800">
+            <div className="col-12 md:col-6">
+              <div className="flex p-4 sm:justify-content-center text-center md:text-left flex align-items-center ">
+                <section className="flex flex-column">
+                  <h1 className="text-6xl font-bold text-gray-900 line-height-2">
+                    <span className="font-light block">{noticiasEntity.titulo}</span>
+                  </h1>
+                  <p className="font-normal text-2xl line-height-3  text-gray-700">
+                    Autor: {noticiasEntity?.user?.firstName + ' ' + noticiasEntity?.user?.lastName}
+                  </p>
+                  <p className="font-normal text-2xl line-height-3 text-gray-700">
+                    Fecha de creada:{' '}
+                    {noticiasEntity.fechaCreada ? (
+                      <TextFormat type="date" value={noticiasEntity.fechaCreada} format={APP_LOCAL_DATE_FORMAT} />
+                    ) : null}
+                  </p>
+                  <p className="font-normal text-2xl line-height-3 md:mt-3 text-gray-700">
+                    Ecosistema: {noticiasEntity?.ecosistema?.nombre}
+                  </p>
+                  <br></br>
+                </section>
+              </div>
             </div>
-          </div>
-          <div className="col-12 md:col-6">
-            <div className="flex mt-6 sm:justify-content-center text-center md:text-left flex align-items-center ">
-              {loading ? (
-                <div className="flex">
-                  <Skeleton width="30rem" height="20rem"></Skeleton>
-                </div>
-              ) : (
-                <img
-                  className="flex w-9 h-20rem sm:w-8 sm:h-8 md:w-10 md:h-10 xl:w-8 xl:h-20rem shadow-2  sm:justify-content-center border-round"
-                  src={`data:${noticiasEntity.urlFotoContentType};base64,${noticiasEntity.urlFoto}`}
-                  alt={noticiasEntity.titulo}
-                />
-              )}
+            <div className="col-12 md:col-6">
+              <div className="flex mt-6 sm:justify-content-center text-center md:text-left flex align-items-center ">
+                {loading ? (
+                  <div className="flex">
+                    <Skeleton width="30rem" height="20rem"></Skeleton>
+                  </div>
+                ) : (
+                  <img
+                    className="flex w-9 h-20rem sm:w-8 sm:h-8 md:w-10 md:h-10 xl:w-8 xl:h-20rem shadow-2  sm:justify-content-center border-round"
+                    src={`content/uploads/${noticiasEntity.urlFotoContentType}`}
+                    alt={noticiasEntity.titulo}
+                  />
+                )}
+              </div>
             </div>
-          </div>
 
-          <div
-            className="  p-4
+            <div
+              className="  p-4
             surface-overlay 
             w-full 
              
@@ -99,10 +104,11 @@ const noticiasVistaGrid1 = (props: RouteComponentProps<{ id: any; idecosistema: 
             md:text-left 
             flex align-items-center 
             text-2xl line-height-3"
-          >
-            {noticiasEntity.descripcion}
+            >
+              {noticiasEntity.descripcion}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </>
   );

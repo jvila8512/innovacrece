@@ -32,7 +32,6 @@ const vistaIdeasReto = props => {
 
   useEffect(() => {
     dispatch(getEntitiesbyReto(props.retoid));
-    dispatch(getReto(props.retoid));
     setLayout(props.layout);
     setIdeas(ideasList);
     dispatch(getTipoNotificaciones({}));
@@ -106,7 +105,7 @@ const vistaIdeasReto = props => {
             <Link to={`/entidad/idea/ver_Idea/${idea.id}/${props.retoid}`} id="jh-tre1" data-cy="ideasReto">
               <img
                 className="w-9 sm:w-12rem xl:w-10rem shadow-2 block xl:block mx-auto border-round"
-                src={`data:${idea.fotoContentType};base64,${idea.foto}`}
+                src={`content/uploads/${idea.fotoContentType}`}
                 alt={idea.titulo}
               />
             </Link>
@@ -153,7 +152,7 @@ const vistaIdeasReto = props => {
           <div className="flex flex-column align-items-center gap-3 py-5">
             <img
               className="w-9 sm:w-12rem xl:w-10rem shadow-2 block xl:block mx-auto border-round"
-              src={`data:${idea.fotoContentType};base64,${idea.foto}`}
+              src={`content/uploads/${idea.fotoContentType}`}
               alt={idea.titulo}
             />
           </div>
@@ -213,8 +212,8 @@ const vistaIdeasReto = props => {
                 usuarioo={props.usuario}
                 idReto={props.retoid}
                 idea={idea1}
-                retouser={retoEntity.user}
-                reto={retoEntity}
+                retouser={props.reto.user}
+                reto={props.reto}
                 index={props.index}
                 entidades={props.entidad}
                 tipoIdeass={props.tipoIdea}

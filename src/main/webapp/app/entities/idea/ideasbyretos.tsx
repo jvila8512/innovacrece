@@ -194,9 +194,9 @@ const IdeasbyRetos = (props: RouteComponentProps<{ id: string; idecosistema: str
 
   const header = (
     <div className="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
-      <h5 className="m-0">Ideas Públicas</h5>
+      <h5 className="m-0 text-blue-600">Ideas Públicas</h5>
       <h5 className="m-0 ">
-        Reto: <span className="text-blue-600">{retoEntity.reto}</span>
+        <span className="text-blue-600"> Reto: {retoEntity.reto}</span>
       </h5>
       <span className="block mt-2 md:mt-0 p-input-icon-left">
         <i className="pi pi-search" />
@@ -260,7 +260,16 @@ const IdeasbyRetos = (props: RouteComponentProps<{ id: string; idecosistema: str
     </>
   );
   const verReto = product => {
-    props.history.push('/entidad/idea/verIdea/' + product.id + '/' + props.match.params.id + '/' + props.match.params.idecosistema);
+    props.history.push(
+      '/entidad/idea/verIdea/' +
+        product.id +
+        '/' +
+        props.match.params.id +
+        '/' +
+        props.match.params.idecosistema +
+        '/' +
+        props.match.params.index
+    );
   };
   const verRetocopia = product => {
     props.history.push('/entidad/reto/retoecosistema/' + props.match.params.idecosistema);

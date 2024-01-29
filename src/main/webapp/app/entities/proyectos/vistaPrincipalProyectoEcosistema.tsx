@@ -68,7 +68,7 @@ const VistaPrincipalProyectoEcosistema = props => {
         <div className="flex flex-column xl:flex-row xl:align-items-center p-2 gap-4">
           <img
             className="w-10rem h-8rem sm:w-10rem xl:w-10rem shadow-2 block xl:block mx-auto border-round"
-            src={`data:${proyecto.logoUrlContentType};base64,${proyecto.logoUrl}`}
+            src={`content/uploads/${proyecto.logoUrlContentType}`}
           />
 
           <div className="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
@@ -97,7 +97,7 @@ const VistaPrincipalProyectoEcosistema = props => {
             <div className="flex flex-column align-content-end align-items-center sm:align-items-center gap-3">
               <Button
                 tag={Link}
-                to={`/entidad/proyectos/proyectos_ecosistema/${props.id} `}
+                to={`/entidad/proyectos/proyectos_ecosistema/${props.id}/${props.index}`}
                 color="primary"
                 size="sm"
                 data-cy="entityEditButton"

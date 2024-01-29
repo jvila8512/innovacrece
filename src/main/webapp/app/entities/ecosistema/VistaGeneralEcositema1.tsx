@@ -17,7 +17,7 @@ import { Skeleton } from 'primereact/skeleton';
 import { InputSwitch } from 'primereact/inputswitch';
 import VistaPrincipalFiltrado from '../reto/vistaPrincipalRetoEcosistemaFiltrado';
 import VistaPrincipalNoticiaSolo from '../noticias/vistaPrincipalNoticiasEcosistemaSolo';
-import { getEntitiesByEcosistematodasFiltrarFechasSinRespuesta } from 'app/entities/reto/reto.reducer';
+import { getEntitiesByEcosistematodasFiltrarFechasSinRespuesta, reset as resetRetos } from 'app/entities/reto/reto.reducer';
 import { Avatar } from 'primereact/avatar';
 
 import { faEyeSlash, faNewspaper } from '@fortawesome/free-solid-svg-icons';
@@ -72,7 +72,7 @@ function VistaGeneralEcositema1(props) {
   const actualizarMisRetos = e => {
     if (!misRetos) retosMio.current.textContent = 'Tus Retos en este ecosistema';
     else retosMio.current.textContent = 'Últimos retos';
-
+    dispatch(resetRetos());
     setMisRetos(!misRetos);
   };
 
@@ -98,6 +98,7 @@ function VistaGeneralEcositema1(props) {
       </React.Fragment>
     );
   };
+  const handleSyncList = () => {};
 
   return (
     <div className=" grid mt-2 mb-4">
@@ -172,6 +173,7 @@ function VistaGeneralEcositema1(props) {
                 <div ref={retosMio} className="text-900 text-2xl text-blue-600 font-medium ">
                   Últimos retos activos
                 </div>
+                <FontAwesomeIcon onClick={handleSyncList} className="ml-2 mt-3" icon="sync" spin={loading} />{' '}
               </div>
 
               {(ecosistemaEntity.user?.login === props.logueado.login &&
@@ -190,7 +192,7 @@ function VistaGeneralEcositema1(props) {
               </div>
             </Link>
 
-            {retosFiltrados && !misRetos ? (
+            {!misRetos ? (
               <VistaPrincipal id={props.id} index={props.index} usuariologeado={props.logueado} />
             ) : (
               <VistaPrincipalFiltrado id={props.id} index={props.index} usuariologeado={props.logueado} validar={misRetos} />
@@ -236,13 +238,13 @@ function VistaGeneralEcositema1(props) {
             <div className="flex justify-content-start ">
               <div className="text-900 text-2xl text-blue-600 font-medium ">Proyectos</div>
             </div>
-            <Link to={`/entidad/proyectos/proyectos_ecosistema/${props.id}`}>
+            <Link to={`/entidad/proyectos/proyectos_ecosistema/${props.id}/${props.index}`}>
               <div className="flex justify-content-start">
                 <div className="text-400  text-blue-800 font-medium ">Ver todos los Proyectos</div>
               </div>
             </Link>
             <ScrollPanel style={{ width: '100%', height: '650px' }}>
-              <VistaPrincipalProyectoEcosistema id={props.id} />
+              <VistaPrincipalProyectoEcosistema id={props.id} index={props.index} />
             </ScrollPanel>
           </div>
         </div>

@@ -12,6 +12,7 @@ import { TextFormat, Translate } from 'react-jhipster';
 import { APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Alert } from 'reactstrap';
+
 import { getEntitiesbyReto } from './idea.reducer';
 import { ToggleButton } from 'primereact/togglebutton';
 import { Button } from 'primereact/button';
@@ -36,6 +37,7 @@ const vistaIdeasReto1 = props => {
   useEffect(() => {
     dispatch(getEntitiesbyReto(props.retoid));
     setLayout(props.layout);
+
     setIdeas(ideasList);
     dispatch(getTipoNotificaciones({}));
   }, []);

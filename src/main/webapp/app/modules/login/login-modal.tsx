@@ -46,7 +46,7 @@ const LoginModal = (props: ILoginModalProps) => {
             <div className="d-flex justify-content-center">
               <div className="innova"></div>
             </div>
-            <Col md="10">
+            <Col md="12">
               {loginError ? (
                 <Alert color="danger" data-cy="loginError">
                   <Translate contentKey="login.messages.error.authentication">
@@ -55,7 +55,7 @@ const LoginModal = (props: ILoginModalProps) => {
                 </Alert>
               ) : null}
             </Col>
-            <Col md="10">
+            <Col md="12">
               <ValidatedField
                 name="username"
                 label={translate('global.form.username.label') + ' o Correo Electrónico'}
@@ -100,6 +100,8 @@ const LoginModal = (props: ILoginModalProps) => {
             name="rememberMe"
             type="checkbox"
             check
+            checked
+            hidden
             label={translate('login.form.rememberme')}
             value={true}
             register={register}

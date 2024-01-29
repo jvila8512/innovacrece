@@ -67,9 +67,8 @@ const EcositemasCard = props => {
     }
   }, [updateSuccess]);
 
-  const header = (
-    <img src={`data:${props.ecosistema.logoUrlContentType};base64,${props.ecosistema.logoUrl}`} style={{ maxHeight: '200px' }} />
-  );
+  const title = <p className="surface-overlay   te   h-8rem mb-2  overflow-hidden text-overflow-ellipsis">{props.ecosistema.nombre}</p>;
+  const header = <img src={`content/uploads/${props.ecosistema.logoUrlContentType}`} style={{ maxHeight: '200px' }} />;
   const footer = !isUsuario ? (
     <span>
       <Button label="Unirse" icon="pi pi-plus" className="p-button-primary" onClick={salvar} disabled={updating} />
@@ -82,13 +81,7 @@ const EcositemasCard = props => {
 
   return (
     <div>
-      <Card
-        title={props.ecosistema.nombre}
-        style={{ width: '25rem', marginBottom: '2em' }}
-        footer={footer}
-        header={header}
-        className="shadow-6 mt-4"
-      >
+      <Card title={title} style={{ width: '25rem', marginBottom: '2em' }} footer={footer} header={header} className="shadow-6 mt-4">
         <p className="surface-overlay  h-6rem mb-2  overflow-hidden text-overflow-ellipsis">{props.ecosistema.tematica}</p>
       </Card>
     </div>

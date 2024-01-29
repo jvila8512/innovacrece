@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { Accordion, AccordionTab } from 'primereact/accordion';
 import { Button } from 'primereact/button';
 import { Toolbar } from 'primereact/toolbar';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { isNumber, TextFormat, Translate, translate, ValidatedBlobField, ValidatedField, ValidatedForm } from 'react-jhipster';
 import { RouteComponentProps } from 'react-router-dom';
 import VistaIdeasReto from '../idea/vistaIdeasReto';
@@ -20,6 +20,18 @@ import { getEntities as getEntidades } from '../entidad/entidad.reducer';
 import { Skeleton } from 'primereact/skeleton';
 import VistaIdeasReto1 from '../idea/vistaIdeasReto1';
 import SpinnerCar from '../loader/spinner';
+
+import { Avatar } from 'primereact/avatar';
+import {
+  getEntity as getFile,
+  getEntities as getFiles,
+  createEntity as createFile,
+  reset as resetFile,
+  getArchivo,
+  deletefile,
+} from 'app/entities/Files/files.reducer';
+import { Tag } from 'primereact/tag';
+import { FileUpload } from 'primereact/fileupload';
 
 const VistaReto1 = (
   props: RouteComponentProps<{
@@ -44,6 +56,98 @@ const VistaReto1 = (
   const updatingIdea = useAppSelector(state => state.idea.updating);
   const updateSuccessIdea = useAppSelector(state => state.idea.updateSuccess);
 
+  const fileUploadRef = useRef(null);
+  const file = useAppSelector(state => state.files.entity);
+  const updatingFile = useAppSelector(state => state.files.updating);
+  const updateSuccessFile = useAppSelector(state => state.files.updateSuccess);
+  const loadingFile = useAppSelector(state => state.files.loading);
+
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [fileModificar, setfileModificar] = useState(null);
+
+  const handleFileUpload = event => {
+    const fileupload = event.files[0];
+    const formData = new FormData();
+    formData.append('files', selectedFile);
+    dispatch(createFile(formData));
+  };
+
+  const chooseOptions = {
+    icon: 'pi pi-fw pi-images',
+    className: 'custom-choose-btn p-button-rounded p-button-outlined',
+  };
+  const uploadOptions = {
+    icon: 'pi pi-fw pi-cloud-upload',
+
+    className: 'custom-upload-btn p-button-success p-button-rounded p-button-outlined p-3',
+  };
+
+  const cancelOptions = { label: 'Cancel', icon: 'pi pi-times', className: 'p-button-danger' };
+
+  const onUpload = e => {};
+
+  const onTemplateSelect = e => {
+    setSelectedFile(e.files[0]);
+  };
+
+  const iconoTemplate = rowData => {
+    return (
+      <>
+        <Avatar image={`content/uploads/${rowData.icono}`} shape="circle" className="p-overlay-badge " size="xlarge" />
+      </>
+    );
+  };
+
+  const headerTemplate = options => {
+    const { className, chooseButton, uploadButton, cancelButton } = options;
+
+    return (
+      <div className={className + ' relative'} style={{ backgroundColor: 'transparent', display: 'flex', alignItems: 'center' }}>
+        {chooseButton}
+      </div>
+    );
+  };
+  const onTemplateRemove = (file1, callback) => {
+    setSelectedFile(null);
+    callback();
+  };
+  const itemTemplate = (file1, props1) => {
+    return (
+      <div className="flex flex-wrap align-items-center">
+        <div className="flex  align-items-center gap-3" style={{ width: '60%' }}>
+          <img alt={file1.name} role="presentation" src={file1.objectURL} width={100} />
+          <span className="flex flex-column text-left ml-3">
+            {file1.name}
+            <small>{new Date().toLocaleDateString()}</small>
+          </span>
+        </div>
+        <Tag value={props1.formatSize} severity="warning" className="px-4 py-3" />
+
+        <Button
+          type="button"
+          icon="pi pi-times"
+          className=" p-button-outlined p-button-rounded p-button-danger ml-3 p-3"
+          onClick={() => onTemplateRemove(file1, props1.onRemove)}
+        />
+      </div>
+    );
+  };
+  const emptyTemplate = () => {
+    return (
+      <div className="flex align-items-center flex-column">
+        {isNewIdea ? (
+          <span style={{ fontSize: '1.2em', color: 'var(--text-color-secondary)' }} className="my-5">
+            Puede arrastrar y soltar el icono aquí
+          </span>
+        ) : (
+          <span style={{ fontSize: '1.2em', color: 'var(--text-color-secondary)' }} className="my-5">
+            Puede arrastrar y soltar el icono para Modificar
+          </span>
+        )}
+      </div>
+    );
+  };
+
   const [p, setP] = useState(0);
 
   const [actualizarVistossoloUnavez, setVistos] = useState(parseInt(localStorage.getItem('vistos1'), 10) || 0);
@@ -67,9 +171,11 @@ const VistaReto1 = (
   useEffect(() => {
     if (updateSuccessIdea) {
       setIdeaDialog(false);
+      setSelectedFile(null);
       dispatch(getEntitiesbyReto(props.match.params.idreto));
     }
   }, [updateSuccessIdea]);
+
   useEffect(() => {
     if (updateSuccess) {
       localStorage.setItem('vistos1', '1');
@@ -114,10 +220,12 @@ const VistaReto1 = (
       user: account,
       reto: retoEntity,
       visto: 0,
+      publica: false,
+      fotoContentType: selectedFile && selectedFile.name,
       tipoIdea: tipoIdeas.find(it => it.id.toString() === values.tipoIdea.toString()),
       entidad: entidads.find(it => it.id.toString() === values.entidad.toString()),
     };
-
+    fileUploadRef.current.upload();
     dispatch(nuevaIdea(entity));
   };
 
@@ -185,7 +293,7 @@ const VistaReto1 = (
                   ) : (
                     <img
                       className=" flex w-9 sm:h-10rem sm:w-12rem xl:w-12 xl:h-28rem  md:w-10 md:h-28rem  sm:justify-content-center shadow-2 block xl:block mt-4 border-round"
-                      src={`data:${retoEntity.urlFotoContentType};base64,${retoEntity.urlFoto}`}
+                      src={`content/uploads/${retoEntity.urlFotoContentType}`}
                       alt={retoEntity.reto}
                     />
                   )}
@@ -233,12 +341,41 @@ const VistaReto1 = (
           </>
         )}
 
-        <Dialog visible={ideaDialog} style={{ width: '450px' }} header="Idea" modal onHide={hideIdeaDialog}>
+        <Dialog visible={ideaDialog} style={{ width: '500px' }} header="Idea" modal onHide={hideIdeaDialog}>
           <Row className="justify-content-center">
             {loadingIdea ? (
               <p>Cargando...</p>
             ) : (
               <ValidatedForm defaultValues={defaultValuesIdeas()} onSubmit={saveIdea}>
+                <ValidatedField
+                  name="url_foto_content_type"
+                  data-cy="url_foto_content_type"
+                  required
+                  readOnly
+                  hidden
+                  id="url_foto_content_type"
+                  type="text"
+                />
+                <FileUpload
+                  ref={fileUploadRef}
+                  name="demo[1]"
+                  accept="image/*"
+                  maxFileSize={1000000}
+                  chooseLabel={isNewIdea ? 'Suba la imagen' : 'Suba la nueva imagen'}
+                  uploadLabel="Modificar"
+                  onSelect={onTemplateSelect}
+                  onUpload={onUpload}
+                  customUpload
+                  uploadHandler={handleFileUpload}
+                  headerTemplate={headerTemplate}
+                  itemTemplate={itemTemplate}
+                  invalidFileSizeMessageSummary="Tamaño del archivo no válido"
+                  invalidFileSizeMessageDetail="El tamaño máximo de carga es de 1MB"
+                  emptyTemplate={emptyTemplate}
+                  chooseOptions={chooseOptions}
+                  uploadOptions={uploadOptions}
+                  cancelOptions={cancelOptions}
+                />
                 <ValidatedField
                   label={translate('jhipsterApp.idea.numeroRegistro')}
                   id="idea-numeroRegistro"
@@ -290,22 +427,16 @@ const VistaReto1 = (
                     required: { value: true, message: translate('entity.validation.required') },
                   }}
                 />
-                <ValidatedBlobField
-                  label={translate('jhipsterApp.idea.foto')}
-                  id="idea-foto"
-                  name="foto"
-                  data-cy="foto"
-                  isImage
-                  accept="image/*"
-                />
-                <ValidatedField
-                  label={translate('jhipsterApp.idea.publica')}
-                  id="idea-publica"
-                  name="publica"
-                  data-cy="publica"
-                  check
-                  type="checkbox"
-                />
+                {retoEntity.user?.login === account.login && (
+                  <ValidatedField
+                    label={translate('jhipsterApp.idea.publica')}
+                    id="idea-publica"
+                    name="publica"
+                    data-cy="publica"
+                    check
+                    type="checkbox"
+                  />
+                )}
                 <ValidatedField
                   id="idea-tipoIdea"
                   name="tipoIdea"

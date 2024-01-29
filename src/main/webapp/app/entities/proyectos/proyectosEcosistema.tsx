@@ -31,8 +31,20 @@ import { IProyectos } from 'app/shared/model/proyectos.model';
 import { getEntity, updateEntity, createEntity, reset, deleteEntity, getEntitiesEcosistema } from './proyectos.reducer';
 import { getEntity as getEcosistema } from 'app/entities/ecosistema/ecosistema.reducer';
 import { mapIdList } from 'app/shared/util/entity-utils';
+import { Avatar } from 'primereact/avatar';
+import {
+  getEntity as getFile,
+  getEntities as getFiles,
+  createEntity as createFile,
+  reset as resetFile,
+  getArchivo,
+  deletefile,
+} from 'app/entities/Files/files.reducer';
+import { FileUpload } from 'primereact/fileupload';
+import { Calendar } from 'primereact/calendar';
+import dayjs from 'dayjs';
 
-const ProyectosEcosistemas = (props: RouteComponentProps<{ id: string }>) => {
+const ProyectosEcosistemas = (props: RouteComponentProps<{ id: string; index: string }>) => {
   const dispatch = useAppDispatch();
   const proyectosList = useAppSelector(state => state.proyectos.entities);
   const proyectosEntity = useAppSelector(state => state.proyectos.entity);
@@ -77,6 +89,125 @@ const ProyectosEcosistemas = (props: RouteComponentProps<{ id: string }>) => {
   const [proyecto, setProyecto] = useState(null);
   const [selectedProyecto, setSelectedProyecto] = useState(emptyProyecto);
 
+  const fileUploadRef = useRef(null);
+  const file = useAppSelector(state => state.files.entity);
+  const updatingFile = useAppSelector(state => state.files.updating);
+  const updateSuccessFile = useAppSelector(state => state.files.updateSuccess);
+  const loadingFile = useAppSelector(state => state.files.loading);
+
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [fileModificar, setfileModificar] = useState(null);
+
+  useEffect(() => {
+    if (updateSuccess && isNew) {
+      dispatch(getEntitiesEcosistema(props.match.params.id));
+      setRetoDialogNew(false);
+      setSelectedProyecto(null);
+    }
+
+    if (updateSuccess && !isNew) {
+      setfileModificar(null);
+      selectedFile && fileUploadRef.current.upload();
+      setRetoDialogNew(false);
+    }
+  }, [updateSuccess]);
+
+  const borrar = icono => {
+    const consulta = deletefile(icono);
+    consulta.then(response => {
+      setRetoDialogNew(false);
+    });
+  };
+
+  useEffect(() => {
+    if (updateSuccessFile && !isNew) {
+      borrar(selectedProyecto.logoUrlContentType);
+    }
+  }, [updateSuccessFile]);
+  const handleFileUpload = event => {
+    const fileupload = event.files[0];
+    const formData = new FormData();
+    formData.append('files', selectedFile);
+    dispatch(createFile(formData));
+  };
+
+  const chooseOptions = {
+    icon: 'pi pi-fw pi-images',
+    className: 'custom-choose-btn p-button-rounded p-button-outlined',
+  };
+  const uploadOptions = {
+    icon: 'pi pi-fw pi-cloud-upload',
+
+    className: 'custom-upload-btn p-button-success p-button-rounded p-button-outlined p-3',
+  };
+
+  const cancelOptions = { label: 'Cancel', icon: 'pi pi-times', className: 'p-button-danger' };
+
+  const onUpload = e => {};
+
+  const onTemplateSelect = e => {
+    setSelectedFile(e.files[0]);
+  };
+
+  const iconoTemplate = rowData => {
+    return (
+      <>
+        <Avatar image={`content/uploads/${rowData.icono}`} shape="circle" className="p-overlay-badge " size="xlarge" />
+      </>
+    );
+  };
+
+  const headerTemplate = options => {
+    const { className, chooseButton, uploadButton, cancelButton } = options;
+
+    return (
+      <div className={className + ' relative'} style={{ backgroundColor: 'transparent', display: 'flex', alignItems: 'center' }}>
+        {chooseButton}
+      </div>
+    );
+  };
+  const onTemplateRemove = (file1, callback) => {
+    setSelectedFile(null);
+    callback();
+  };
+  const itemTemplate = (file1, props1) => {
+    return (
+      <div className="flex flex-wrap align-items-center">
+        <div className="flex  align-items-center gap-3" style={{ width: '60%' }}>
+          <img alt={file1.name} role="presentation" src={file1.objectURL} width={100} />
+          <span className="flex flex-column text-left ml-3">
+            {file1.name}
+            <small>{new Date().toLocaleDateString()}</small>
+          </span>
+        </div>
+        <Tag value={props1.formatSize} severity="warning" className="px-4 py-3" />
+
+        <Button
+          type="button"
+          icon="pi pi-times"
+          className=" p-button-outlined p-button-rounded p-button-danger ml-3 p-3"
+          onClick={() => onTemplateRemove(file1, props1.onRemove)}
+        />
+      </div>
+    );
+  };
+
+  const emptyTemplate = () => {
+    return (
+      <div className="flex align-items-center flex-column">
+        {isNew ? (
+          <span style={{ fontSize: '1.2em', color: 'var(--text-color-secondary)' }} className="my-5">
+            Puede arrastrar y soltar el icono aquí
+          </span>
+        ) : (
+          <span style={{ fontSize: '1.2em', color: 'var(--text-color-secondary)' }} className="my-5">
+            Puede arrastrar y soltar el icono para Modificar
+          </span>
+        )}
+      </div>
+    );
+  };
+
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     nombre: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
@@ -88,7 +219,6 @@ const ProyectosEcosistemas = (props: RouteComponentProps<{ id: string }>) => {
 
   useEffect(() => {
     dispatch(getEcosistema(props.match.params.id));
-
     dispatch(getEntitiesEcosistema(props.match.params.id));
     dispatch(getSectors({}));
     dispatch(getLineaInvestigacions({}));
@@ -121,7 +251,7 @@ const ProyectosEcosistemas = (props: RouteComponentProps<{ id: string }>) => {
   };
 
   const atras = () => {
-    props.history.push('/usuario-panel');
+    props.history.push(`/usuario-panel/${props.match.params.index}`);
   };
 
   const leftToolbarTemplate = () => {
@@ -137,21 +267,32 @@ const ProyectosEcosistemas = (props: RouteComponentProps<{ id: string }>) => {
   const rightToolbarTemplate = () => {
     return (
       <React.Fragment>
-        {ecosistemaEntity.user?.login === account.login && account?.authorities?.find(rol => rol === 'ROLE_ADMINECOSISTEMA') && (
+        {account?.authorities?.find(rol => rol === 'ROLE_GESTOR') && ecosistemaEntity?.users?.find(user => user.id === account?.id) && (
           <Button label="Nuevo Proyecto" icon="pi pi-plus" className="p-button-info" onClick={verDialogNuevo} />
         )}
       </React.Fragment>
     );
   };
   const header = (
-    <div className="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
-      <h3 className="m-0">Proyectos</h3>
-      <h5 className="m-0">Ecosistema: {ecosistemaEntity.nombre}</h5>
-
-      <span className="block mt-2 md:mt-0 p-input-icon-left">
-        <i className="pi pi-search" />
-        <InputText value={globalFilter} type="search" onInput={onGlobalFilterChange} placeholder="Buscar..." />
-      </span>
+    <div className="grid">
+      <div className="col">
+        <div className="flex justify-content-start  font-bold  m-2">
+          <div className="text-primary text-xl">Proyectos</div>
+        </div>
+      </div>
+      <div className="col">
+        <div className="flex align-items-center justify-content-center font-bold  m-2">
+          <h5 className="text-primary">Ecosistema: {ecosistemaEntity.nombre}</h5>
+        </div>
+      </div>
+      <div className="col">
+        <div className="flex align-items-center justify-content-end  m-2">
+          <span className=" block  p-input-icon-left">
+            <i className="pi pi-search" />
+            <InputText value={globalFilter} type="search" onInput={onGlobalFilterChange} placeholder="Buscar..." />
+          </span>
+        </div>
+      </div>
     </div>
   );
 
@@ -221,17 +362,6 @@ const ProyectosEcosistemas = (props: RouteComponentProps<{ id: string }>) => {
     setDeleteRetoDialog(false);
   };
 
-  useEffect(() => {
-    if (updateSuccess) {
-      dispatch(getEntitiesEcosistema(props.match.params.id));
-      setRetoDialogNew(false);
-      setSelectedProyecto(null);
-      setNew(true);
-
-      dispatch(reset());
-    }
-  }, [updateSuccess]);
-
   const hideDeleteRetoDialog = () => {
     setDeleteRetoDialog(false);
     setSelectedProyecto(null);
@@ -263,10 +393,12 @@ const ProyectosEcosistemas = (props: RouteComponentProps<{ id: string }>) => {
       lineaInvestigacions: mapIdList(values.lineaInvestigacions),
       ods: mapIdList(values.ods),
       tipoProyecto: tipoProyectos.find(it => it.id.toString() === values.tipoProyecto.toString()),
+      logoUrlContentType: selectedFile ? selectedFile.name : values.logoUrlContentType,
     };
 
     if (isNew) {
       dispatch(createEntity(entity));
+      fileUploadRef.current.upload();
     } else {
       dispatch(updateEntity(entity));
     }
@@ -335,16 +467,16 @@ const ProyectosEcosistemas = (props: RouteComponentProps<{ id: string }>) => {
 
           <Dialog
             visible={retoDialog}
-            style={{ width: '450px' }}
+            style={{ width: '500px' }}
             header="Proyecto"
             modal
             className="p-fluid"
             footer={productDialogFooter}
             onHide={hideDialog}
           >
-            {selectedProyecto?.logoUrl && (
+            {selectedProyecto?.logoUrlContentType && (
               <img
-                src={`data:${selectedProyecto?.logoUrlContentType};base64,${selectedProyecto?.logoUrl}`}
+                src={`content/uploads/${selectedProyecto?.logoUrlContentType}`}
                 style={{ maxHeight: '200px' }}
                 className="mt-0 mx-auto mb-5 block shadow-2"
               />
@@ -352,11 +484,36 @@ const ProyectosEcosistemas = (props: RouteComponentProps<{ id: string }>) => {
 
             <div className="field">
               <label htmlFor="name">Nombre</label>
-              <InputText id="name" value={selectedProyecto?.nombre} autoFocus />
+              <InputText id="name" readOnly value={selectedProyecto?.nombre} autoFocus />
             </div>
             <div className="field">
               <label htmlFor="ob">Descripción</label>
               <InputTextarea id="ob" value={selectedProyecto?.descripcion} rows={3} cols={20} />
+            </div>
+            <div className="field">
+              <label htmlFor="name">
+                <Translate contentKey="jhipsterApp.proyectos.autor"></Translate>
+              </label>
+              <InputText id="name" readOnly value={selectedProyecto?.autor} />
+            </div>
+
+            <div className="field">
+              <label htmlFor="name">
+                <Translate contentKey="jhipsterApp.proyectos.fechaInicio">Fecha Inicio</Translate>
+              </label>
+              <InputText id="name" readOnly value={selectedProyecto?.necesidad} />
+            </div>
+            <div className="field">
+              <label htmlFor="name">
+                <Translate contentKey="jhipsterApp.proyectos.fechaFin">Fecha Inicio</Translate>
+              </label>
+              <InputText id="name" readOnly value={dayjs(selectedProyecto?.fechaInicio).format('DD/MM/YYYY')} />
+            </div>
+            <div className="field">
+              <label htmlFor="name">
+                <Translate contentKey="jhipsterApp.proyectos.fechaFin">Fecha Fin</Translate>
+              </label>
+              <InputText id="name" readOnly value={dayjs(selectedProyecto?.fechaFin).format('DD/MM/YYYY')} />
             </div>
           </Dialog>
 
@@ -371,11 +528,41 @@ const ProyectosEcosistemas = (props: RouteComponentProps<{ id: string }>) => {
                       name="id"
                       required
                       readOnly
+                      hidden
                       id="proyectos-id"
                       label={translate('global.field.id')}
                       validate={{ required: true }}
                     />
                   ) : null}
+                  <ValidatedField
+                    name="logoUrlContentType"
+                    data-cy="logoUrlContentType"
+                    required
+                    readOnly
+                    hidden
+                    id="logoUrlContentType"
+                    type="text"
+                  />
+                  <FileUpload
+                    ref={fileUploadRef}
+                    name="demo[1]"
+                    accept="image/*"
+                    maxFileSize={1000000}
+                    chooseLabel={isNew ? 'Suba el Icono' : 'Suba el Icono nuevo'}
+                    uploadLabel="Modificar"
+                    onSelect={onTemplateSelect}
+                    onUpload={onUpload}
+                    customUpload
+                    uploadHandler={handleFileUpload}
+                    headerTemplate={headerTemplate}
+                    itemTemplate={itemTemplate}
+                    invalidFileSizeMessageSummary="Tamaño del archivo no válido"
+                    invalidFileSizeMessageDetail="El tamaño máximo de carga es de 1MB"
+                    emptyTemplate={emptyTemplate}
+                    chooseOptions={chooseOptions}
+                    uploadOptions={uploadOptions}
+                    cancelOptions={cancelOptions}
+                  />
                   <ValidatedField
                     label={translate('jhipsterApp.proyectos.nombre')}
                     id="proyectos-nombre"
@@ -435,14 +622,6 @@ const ProyectosEcosistemas = (props: RouteComponentProps<{ id: string }>) => {
                     validate={{
                       required: { value: true, message: translate('entity.validation.required') },
                     }}
-                  />
-                  <ValidatedBlobField
-                    label={translate('jhipsterApp.proyectos.logoUrl')}
-                    id="proyectos-logoUrl"
-                    name="logoUrl"
-                    data-cy="logoUrl"
-                    isImage
-                    accept="image/*"
                   />
                   <ValidatedField
                     label={translate('jhipsterApp.proyectos.sector')}
@@ -513,9 +692,11 @@ const ProyectosEcosistemas = (props: RouteComponentProps<{ id: string }>) => {
                   </ValidatedField>
                   &nbsp;
                   <Button color="primary" id="save-entity" data-cy="entityCreateSaveButton" type="submit" disabled={updating}>
-                    <FontAwesomeIcon icon="save" />
-                    &nbsp;
-                    <Translate contentKey="entity.action.save">Save</Translate>
+                    <span className="m-auto">
+                      <FontAwesomeIcon icon="save" />
+                      &nbsp;
+                      <Translate contentKey="entity.action.save">Save</Translate>
+                    </span>
                   </Button>
                 </ValidatedForm>
               )}

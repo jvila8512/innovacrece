@@ -168,12 +168,7 @@ const VistaNoticia = props => {
                 <div className="p-4">
                   <div className="flex flex-column align-items-center gap-3 py-5">
                     <Link to={`/entidad/noticias/ver-noticias/${noticia.id}`} id="jh-tre" data-cy="ecosistemas">
-                      <img
-                        className="mb-1"
-                        src={`data:${noticia.urlFotoContentType};base64,${noticia.urlFoto}`}
-                        alt={noticia.titulo}
-                        style={{ maxHeight: '200px' }}
-                      />
+                      <img src={`content/uploads/${noticia.urlFotoContentType}`} style={{ maxHeight: '200px' }} />
                     </Link>
                   </div>
                   <div className="text-2xl font-bold text-900">{noticia.titulo}</div>

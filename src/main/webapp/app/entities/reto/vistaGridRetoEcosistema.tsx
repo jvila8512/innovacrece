@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from 'app/config/store';
 
 import { Link, RouteComponentProps } from 'react-router-dom';
 import { TextFormat, Translate } from 'react-jhipster';
-import { getEntitiesByEcosistema } from './reto.reducer';
+import { getEntitiesByEcosistema, reset as resetRetos } from './reto.reducer';
 import { APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Alert } from 'reactstrap';
@@ -35,7 +35,6 @@ const VistaGridReto = (props: RouteComponentProps<{ id: string; index: string }>
 
   useEffect(() => {
     dispatch(getEntitiesByEcosistema(props.match.params.id));
-
     dispatch(getEntity(props.match.params.id));
     setLayout('grid');
   }, []);
@@ -80,7 +79,7 @@ const VistaGridReto = (props: RouteComponentProps<{ id: string; index: string }>
           <div className="flex flex-column ">
             <img
               className="w-9 sm:w-10rem xl:w-8rem shadow-2 block xl:block mx-auto border-round"
-              src={`data:${reto.urlFotoContentType};base64,${reto.urlFoto}`}
+              src={`content/uploads/${reto.urlFotoContentType}`}
               alt={reto.reto}
             />
           </div>
@@ -117,14 +116,14 @@ const VistaGridReto = (props: RouteComponentProps<{ id: string; index: string }>
 
   const gridItem = reto => {
     return (
-      <div className="flex md:justify-content-center sm:justify-content-center col-12 sm:col-12 md:col-6 lg:col-6 xl:col-3 ">
+      <div className="flex md:justify-content-center sm:justify-content-center col-12 sm:col-12 md:col-6 lg:col-6 xl:col-3 mt-4">
         <div className=" h-26rem w-24rem max-w-30rem max-h-30rem p-4 border-round-xl shadow-4 mb-2 relative ">
           <div className={` ${reto.publico && 'curso'}`}></div>
 
           <div className="flex flex-column align-items-center gap-3 ">
             <img
               className="w-9rem  sm:h-10rem sm:w-12rem xl:w-12rem xl:h-10rem shadow-2 block xl:block mx-auto border-round"
-              src={`data:${reto.urlFotoContentType};base64,${reto.urlFoto}`}
+              src={`content/uploads/${reto.urlFotoContentType}`}
               alt={reto.reto}
             />
           </div>
@@ -188,8 +187,20 @@ const VistaGridReto = (props: RouteComponentProps<{ id: string; index: string }>
     else if (layout1 === 'grid') return gridItem(reto);
   };
 
-  const header = () => {
-    return <></>;
+  const renderHeader = () => {
+    return (
+      <div className="grid grid-nogutter">
+        <div className="col-4" style={{ textAlign: 'left' }}>
+          <h5 className="m-0 text-blue-600">Retos</h5>
+        </div>
+        <div className="col-4" style={{ textAlign: 'center' }}>
+          <h5 className="m-0 ">
+            <span className="text-blue-600"> Ecosistema: {ecosistemaUserEntity.nombre}</span>
+          </h5>
+        </div>
+        <div className="col-4" style={{ textAlign: 'left' }}></div>
+      </div>
+    );
   };
   const atrasvista = () => {
     props.history.push(`/entidad/reto/retoecosistema/${props.match.params.id}/${props.match.params.index}`);
@@ -210,6 +221,7 @@ const VistaGridReto = (props: RouteComponentProps<{ id: string; index: string }>
   const atras = () => {
     props.history.push(`/usuario-panel/${props.match.params.index}`);
   };
+
   const leftToolbarTemplate = () => {
     return (
       <React.Fragment>
@@ -222,7 +234,7 @@ const VistaGridReto = (props: RouteComponentProps<{ id: string; index: string }>
   const order = () => {
     return 4;
   };
-
+  const header = renderHeader();
   return (
     <>
       <div className="card mt-4 mb-4">
@@ -231,6 +243,7 @@ const VistaGridReto = (props: RouteComponentProps<{ id: string; index: string }>
           <DataView
             className="mt-4 mb-4"
             value={retos}
+            header={header}
             layout={forma}
             itemTemplate={itemTemplate}
             emptyMessage="No hay Retos"

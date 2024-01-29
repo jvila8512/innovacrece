@@ -50,7 +50,7 @@ const EcosistemasCarusel = props => {
         <div className="product-item-content ">
           <Link to={`ecosistema/vistaprincipal/${ecosistema.id}`} id="jh-tre" data-cy="ecosistemas">
             <div className="mb-3">
-              <img src={`data:${ecosistema.logoUrlContentType};base64,${ecosistema.logoUrl}`} style={{ width: '300px', height: '200px' }} />
+              <img src={`content/uploads/${ecosistema.logoUrlContentType}`} style={{ width: '300px', height: '200px' }} />
             </div>
           </Link>
           <div className="mb-3 font-bold text-2xl">
@@ -108,10 +108,7 @@ const EcosistemasCarusel = props => {
                 ) : (
                   <Link to={`/entidad/ecosistema/card`} id="jh-tre" data-cy="ecosistemas">
                     <div className="mb-3">
-                      <img
-                        src={`data:${ecosistema.logoUrlContentType};base64,${ecosistema.logoUrl}`}
-                        style={{ width: '300px', height: '200px' }}
-                      />
+                      <img src={`content/uploads/${ecosistema.logoUrlContentType}`} style={{ width: '300px', height: '200px' }} />
                     </div>
                   </Link>
                 )}

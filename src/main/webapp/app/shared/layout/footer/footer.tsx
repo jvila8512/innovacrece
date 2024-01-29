@@ -63,7 +63,7 @@ const Footer = () => (
     <Row>
       <Col md="12">
         <p className="text-white">
-          ©2023 Innov@Crece | Información Legal | Si tienes alguna pregunta acerca de nuestra plataforma de innovación abierta, ponte en
+          ©2024 Innov@Crece | Información Legal | Si tienes alguna pregunta acerca de nuestra plataforma de innovación abierta, ponte en
           <Link to={`/entidad/contacto/contactar`}>
             <span className="pl-1"> contacto </span>
           </Link>{' '}

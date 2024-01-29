@@ -42,8 +42,8 @@ const CrudNotificacion = (props: RouteComponentProps<{ index: string }>) => {
   const [deleteTipoNotificacionDialog, setDeleteTipoNotificacionDialog] = useState(false);
   const [isNew, setNew] = useState(true);
   const dt = useRef(null);
-  const fileUploadRef = useRef(null);
 
+  const [iconoBorrar, setIconoBorrar] = useState('');
   const tiponotificacionList = useAppSelector(state => state.tipoNotificacion.entities);
 
   const tipoNotificacionEntity = useAppSelector(state => state.tipoNotificacion.entity);
@@ -51,16 +51,16 @@ const CrudNotificacion = (props: RouteComponentProps<{ index: string }>) => {
   const updating = useAppSelector(state => state.tipoNotificacion.updating);
   const updateSuccess = useAppSelector(state => state.tipoNotificacion.updateSuccess);
 
+  const fileUploadRef = useRef(null);
   const file = useAppSelector(state => state.files.entity);
   const updatingFile = useAppSelector(state => state.files.updating);
   const updateSuccessFile = useAppSelector(state => state.files.updateSuccess);
   const loadingFile = useAppSelector(state => state.files.loading);
 
-  const [iconoBorrar, setIconoBorrar] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
-  const [enviando, setEnviando] = useState(false);
-
   const [fileModificar, setfileModificar] = useState(null);
+
+  const [enviando, setEnviando] = useState(false);
 
   const emptyTipoNotificacion = {
     id: null,

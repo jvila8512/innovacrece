@@ -45,6 +45,17 @@ import {
 import { getEntities as getTipoNotificaciones } from 'app/entities/tipo-notificacion/tipo-notificacion.reducer';
 import dayjs from 'dayjs';
 
+import { Avatar } from 'primereact/avatar';
+import {
+  getEntity as getFile,
+  getEntities as getFiles,
+  createEntity as createFile,
+  reset as resetFile,
+  getArchivo,
+  deletefile,
+} from 'app/entities/Files/files.reducer';
+import { FileUpload } from 'primereact/fileupload';
+
 const RetosIdeas = (props: RouteComponentProps<{ id: string; index: string }>) => {
   const dispatch = useAppDispatch();
   const retoList = useAppSelector(state => state.reto.entities);
@@ -116,6 +127,152 @@ const RetosIdeas = (props: RouteComponentProps<{ id: string; index: string }>) =
     fechaFin: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
   });
 
+  const fileUploadRef = useRef(null);
+  const file = useAppSelector(state => state.files.entity);
+  const updatingFile = useAppSelector(state => state.files.updating);
+  const updateSuccessFile = useAppSelector(state => state.files.updateSuccess);
+  const loadingFile = useAppSelector(state => state.files.loading);
+
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [fileModificar, setfileModificar] = useState(null);
+
+  const borrar = icono => {
+    const consulta = deletefile(icono);
+    consulta.then(response => {
+      setRetoDialogNew(false);
+    });
+  };
+
+  useEffect(() => {
+    if (updateSuccessFile && !isNew) {
+      borrar(reto?.urlFotoContentType);
+      setSelectedReto(null);
+    }
+  }, [updateSuccessFile]);
+
+  useEffect(() => {
+    if (updateSuccess && !isNew) {
+      setfileModificar(null);
+      selectedFile && fileUploadRef.current.upload();
+      setRetoDialogNew(false);
+    }
+
+    if (updateSuccess && isNew) {
+      const entityNotificacion = {
+        ...emptyNotificacion,
+        descripcion:
+          'Ha sido lanzado un nuevo reto en el ecosistema ' +
+          ecosistemaEntity.nombre +
+          ' con el titulo ' +
+          retoEntity.reto +
+          '  y tiene hasta el ' +
+          dayjs(retoEntity.fechaFin).utc().format('dddd, D MMMM , YYYY') +
+          ' para aportar tus ideas',
+        visto: 0,
+        fecha: dayjs().toDate(),
+        user: account,
+        usercreada: account,
+        tipoNotificacion: tipoNotificacion.find(it => it.tipoNotificacion === 'Reto'),
+      };
+      const retos = crearNotificacionRetosUserEcosistema(props.match.params.id, entityNotificacion);
+      retos.then(response => {});
+    }
+
+    dispatch(getEntitiesByEcosistematodasFiltrarFechas(props.match.params.id));
+    setRetoDialogNew(false);
+  }, [updateSuccess]);
+
+  useEffect(() => {
+    if (updateSuccessIdea) {
+      setIdeaDialog(false);
+      dispatch(resetearIdea());
+    }
+  }, [updateSuccessIdea]);
+
+  const handleFileUpload = event => {
+    const fileupload = event.files[0];
+    const formData = new FormData();
+    formData.append('files', selectedFile);
+    dispatch(createFile(formData));
+  };
+
+  const chooseOptions = {
+    icon: 'pi pi-fw pi-images',
+    className: 'custom-choose-btn p-button-rounded p-button-outlined',
+  };
+  const uploadOptions = {
+    icon: 'pi pi-fw pi-cloud-upload',
+
+    className: 'custom-upload-btn p-button-success p-button-rounded p-button-outlined p-3',
+  };
+
+  const cancelOptions = { label: 'Cancel', icon: 'pi pi-times', className: 'p-button-danger' };
+
+  const onUpload = e => {};
+
+  const onTemplateSelect = e => {
+    setSelectedFile(e.files[0]);
+  };
+
+  const iconoTemplate = rowData => {
+    return (
+      <>
+        <Avatar image={`content/uploads/${rowData.icono}`} shape="circle" className="p-overlay-badge " size="xlarge" />
+      </>
+    );
+  };
+
+  const headerTemplate = options => {
+    const { className, chooseButton, uploadButton, cancelButton } = options;
+
+    return (
+      <div className={className + ' relative'} style={{ backgroundColor: 'transparent', display: 'flex', alignItems: 'center' }}>
+        {chooseButton}
+      </div>
+    );
+  };
+  const onTemplateRemove = (file1, callback) => {
+    setSelectedFile(null);
+    callback();
+  };
+  const itemTemplate = (file1, props1) => {
+    return (
+      <div className="flex flex-wrap align-items-center">
+        <div className="flex  align-items-center gap-3" style={{ width: '60%' }}>
+          <img alt={file1.name} role="presentation" src={file1.objectURL} width={100} />
+          <span className="flex flex-column text-left ml-3">
+            {file1.name}
+            <small>{new Date().toLocaleDateString()}</small>
+          </span>
+        </div>
+        <Tag value={props1.formatSize} severity="warning" className="px-4 py-3" />
+
+        <Button
+          type="button"
+          icon="pi pi-times"
+          className=" p-button-outlined p-button-rounded p-button-danger ml-3 p-3"
+          onClick={() => onTemplateRemove(file1, props1.onRemove)}
+        />
+      </div>
+    );
+  };
+
+  const emptyTemplate = () => {
+    return (
+      <div className="flex align-items-center flex-column">
+        {isNew ? (
+          <span style={{ fontSize: '1.2em', color: 'var(--text-color-secondary)' }} className="my-5">
+            Puede arrastrar y soltar el icono aquí
+          </span>
+        ) : (
+          <span style={{ fontSize: '1.2em', color: 'var(--text-color-secondary)' }} className="my-5">
+            Puede arrastrar y soltar el icono para Modificar
+          </span>
+        )}
+      </div>
+    );
+  };
+
   useEffect(() => {
     dispatch(getEntitiesByEcosistematodasFiltrarFechas(props.match.params.id));
     dispatch(getEcosistema(props.match.params.id));
@@ -170,7 +327,7 @@ const RetosIdeas = (props: RouteComponentProps<{ id: string; index: string }>) =
       <React.Fragment>
         <div className="my-2">
           <Button label="Atrás" icon="pi pi-arrow-left" className="p-button-secondary mr-2" onClick={atras} />
-          {account.authorities.find(rol => rol === 'ROLE_ADMINECOSISTEMA') && (
+          {account?.authorities?.find(rol => rol === 'ROLE_GESTOR') && ecosistemaEntity?.users?.find(user => user.id === account?.id) && (
             <Button
               icon="pi pi-trash"
               className="p-button-danger"
@@ -179,13 +336,11 @@ const RetosIdeas = (props: RouteComponentProps<{ id: string; index: string }>) =
             />
           )}
         </div>
-        <h5 className="flex align-items-center justify-content-center text-2xl text-blue-600 font-medium ml-2">
-          Ecosistema: {ecosistemaEntity.nombre}
-        </h5>
       </React.Fragment>
     );
   };
   const atrasvista = () => {
+    dispatch(reset());
     props.history.push(`/entidad/reto/retogrid/${props.match.params.id}/${props.match.params.index}`);
   };
 
@@ -201,8 +356,10 @@ const RetosIdeas = (props: RouteComponentProps<{ id: string; index: string }>) =
   };
   const header = (
     <div className="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
-      <h5 className="flex align-items-center justify-content-center text-2xl text-blue-600 font-medium">Retos</h5>
-
+      <h5 className="m-0 text-blue-600">Retos</h5>
+      <h5 className="m-0 ">
+        <span className="text-blue-600"> Ecosistema: {ecosistemaEntity.nombre}</span>
+      </h5>
       <span className="block mt-2 md:mt-0 p-input-icon-left">
         <i className="pi pi-search" />
         <InputText value={globalFilter} type="search" onInput={onGlobalFilterChange} placeholder="Buscar..." />
@@ -296,44 +453,6 @@ const RetosIdeas = (props: RouteComponentProps<{ id: string; index: string }>) =
     setDeleteRetoDialog(false);
   };
 
-  useEffect(() => {
-    if (updateSuccess) {
-      dispatch(getEntitiesByEcosistematodasFiltrarFechas(props.match.params.id));
-      setRetoDialogNew(false);
-      setSelectedReto(null);
-      setNew(true);
-    }
-
-    if (updateSuccess && isNew) {
-      const entityNotificacion = {
-        ...emptyNotificacion,
-        descripcion:
-          'Ha sido lanzado un nuevo reto en el ecosistema ' +
-          ecosistemaEntity.nombre +
-          ' con el titulo ' +
-          retoEntity.reto +
-          '  y tiene hasta el ' +
-          dayjs(retoEntity.fechaFin).utc().format('dddd, D MMMM , YYYY') +
-          ' para aportar tus ideas',
-        visto: 0,
-        fecha: dayjs().toDate(),
-        user: account,
-        usercreada: account,
-        tipoNotificacion: tipoNotificacion.find(it => it.tipoNotificacion === 'Reto'),
-      };
-
-      const retos = crearNotificacionRetosUserEcosistema(props.match.params.id, entityNotificacion);
-      retos.then(response => {});
-    }
-  }, [updateSuccess]);
-
-  useEffect(() => {
-    if (updateSuccessIdea) {
-      setIdeaDialog(false);
-      dispatch(resetearIdea());
-    }
-  }, [updateSuccessIdea]);
-
   const hideDeleteRetoDialog = () => {
     setDeleteRetoDialog(false);
   };
@@ -377,9 +496,11 @@ const RetosIdeas = (props: RouteComponentProps<{ id: string; index: string }>) =
       user: account,
       visto: isNew ? 0 : reto.visto,
       ecosistema: ecosistemaEntity,
+      urlFotoContentType: selectedFile ? selectedFile.name : values.urlFotoContentType,
     };
 
     if (isNew) {
+      fileUploadRef.current.upload();
       dispatch(createEntity(entity));
     } else {
       dispatch(updateEntity(entity));
@@ -466,7 +587,7 @@ const RetosIdeas = (props: RouteComponentProps<{ id: string; index: string }>) =
           >
             {reto.urlFoto && (
               <img
-                src={`data:${reto.urlFotoContentType};base64,${reto.urlFoto}`}
+                src={`content/uploads/${reto.urlFotoContentType}`}
                 style={{ maxHeight: '200px' }}
                 className="mt-0 mx-auto mb-5 block shadow-2"
               />
@@ -488,6 +609,35 @@ const RetosIdeas = (props: RouteComponentProps<{ id: string; index: string }>) =
                 <p>Cargando...</p>
               ) : (
                 <ValidatedForm defaultValues={defaultValues()} onSubmit={saveEntity}>
+                  <ValidatedField
+                    name="urlFotoContentType"
+                    data-cy="urlFotoContentType"
+                    required
+                    readOnly
+                    hidden
+                    id="urlFotoContentType"
+                    type="text"
+                  />
+                  <FileUpload
+                    ref={fileUploadRef}
+                    name="demo[1]"
+                    accept="image/*"
+                    maxFileSize={1000000}
+                    chooseLabel={isNew ? 'Suba la imagen' : 'Suba la imagen nueva'}
+                    uploadLabel="Modificar"
+                    onSelect={onTemplateSelect}
+                    onUpload={onUpload}
+                    customUpload
+                    uploadHandler={handleFileUpload}
+                    headerTemplate={headerTemplate}
+                    itemTemplate={itemTemplate}
+                    invalidFileSizeMessageSummary="Tamaño del archivo no válido"
+                    invalidFileSizeMessageDetail="El tamaño máximo de carga es de 1MB"
+                    emptyTemplate={emptyTemplate}
+                    chooseOptions={chooseOptions}
+                    uploadOptions={uploadOptions}
+                    cancelOptions={cancelOptions}
+                  />
                   <ValidatedField
                     label={translate('jhipsterApp.reto.reto')}
                     id="reto-reto"
@@ -565,14 +715,6 @@ const RetosIdeas = (props: RouteComponentProps<{ id: string; index: string }>) =
                     data-cy="publico"
                     check
                     type="checkbox"
-                  />
-                  <ValidatedBlobField
-                    label={translate('jhipsterApp.reto.urlFoto')}
-                    id="reto-urlFoto"
-                    name="urlFoto"
-                    data-cy="urlFoto"
-                    isImage
-                    accept="image/*"
                   />
                   &nbsp;
                   <Button

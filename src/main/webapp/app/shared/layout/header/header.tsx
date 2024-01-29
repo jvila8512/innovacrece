@@ -84,18 +84,16 @@ const Header = (props: IHeaderProps) => {
   return (
     <div id="app-header">
       {renderDevRibbon()}
-      <LoadingBar className="loading-bar" />
 
-      <Navbar bg="light" data-cy="navbar" dark container="fluid" expand="xl" fixed="top" className="jh-navbar mr-auto">
+      <Navbar bg="light" data-cy="navbar" dark container="fluid" expand="xl" fixed="top" className="jh-navbar ml-auto">
         <NavbarToggler aria-label="Menu" onClick={toggleMenu} className="me-2" />
         <Brand />
 
         <Collapse isOpen={menuOpen} navbar className="">
-          <Nav id="header-tabs" className="" navbar>
+          <Nav id="header-tabs" className="ms-auto" navbar>
             <Home on={toggleMenu} />
 
             {<InnovacionMenu on={toggleMenu} />}
-            {<InnovacionAbiertaMenu on={toggleMenu} />}
 
             {props.isAuthenticated && isAdmin && <EntitiesMenu on={toggleMenu} />}
             {props.isAuthenticated && isAdmin && <EntidadesAdmin on={toggleMenu} />}
