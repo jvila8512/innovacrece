@@ -9,7 +9,7 @@ import { NavDropdown } from './menu-components';
 export const InnovacionMenu = props => (
   <NavDropdown name="Ecosistemas" id="eco-menu1" style={{ maxHeight: '80vh', overflow: 'auto' }}>
     <MenuItem icon="gears" to="/usuario-panel" on={props.on}>
-      Lanzar un Retos/Desafios
+      Lanzar un Reto
     </MenuItem>
 
     <MenuItem icon="search" to="/entidad/ecosistema/card" on={props.on}>

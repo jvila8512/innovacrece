@@ -5,10 +5,13 @@ import { Translate, translate, ValidatedField } from 'react-jhipster';
 import { Button, Modal, ModalHeader, ModalBody, ModalFooter, Alert, Row, Col, Form } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import Cargando from 'app/entities/loader/cargando';
+import SpinnerCar from 'app/entities/loader/spinner';
 
 export interface ILoginModalProps {
   showModal: boolean;
   loginError: boolean;
+  cargando: boolean;
   handleLogin: (username: string, password: string, rememberMe: boolean) => void;
   handleClose: () => void;
 }
@@ -18,6 +21,7 @@ const LoginModal = (props: ILoginModalProps) => {
     props.handleLogin(username, password, rememberMe);
   };
   const [shown, setShown] = useState(false);
+  const [mostrarLoading, setmostrarLoading] = useState(false);
 
   const {
     handleSubmit,
@@ -30,6 +34,7 @@ const LoginModal = (props: ILoginModalProps) => {
 
   const handleLoginSubmit = e => {
     handleSubmit(login)(e);
+    setmostrarLoading(true);
   };
   const cambiar = () => {
     setShown(!shown);
@@ -122,12 +127,14 @@ const LoginModal = (props: ILoginModalProps) => {
               <Translate contentKey="global.messages.info.register.link">Register a new account</Translate>
             </Link>
           </Alert>
+
+          {props.cargando && <SpinnerCar />}
         </ModalBody>
         <ModalFooter>
           <Button color="secondary" onClick={handleClose} tabIndex={1}>
             <Translate contentKey="entity.action.cancel">Cancel</Translate>
           </Button>{' '}
-          <Button color="primary" type="submit" data-cy="submit">
+          <Button color="primary" type="submit" data-cy="submit" disabled={props.cargando}>
             <Translate contentKey="login.form.button">Sign in</Translate>
           </Button>
         </ModalFooter>

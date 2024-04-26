@@ -4,8 +4,8 @@ import React from 'react';
 
 export const Cargando = () => {
   return (
-    <div className="loader-container">
-      <div className="loader1  im "></div>
+    <div className="loader1 ">
+      <span>Espere...</span> <div className="half-spinner"></div>
     </div>
   );
 };

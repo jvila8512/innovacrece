@@ -22,8 +22,9 @@ import { Avatar } from 'primereact/avatar';
 
 import { faEyeSlash, faNewspaper } from '@fortawesome/free-solid-svg-icons';
 import ComponenteCarusel from '../ecosistema-componente/componenteCarusel';
-import { Row } from 'reactstrap';
+import { Row, Spinner } from 'reactstrap';
 import { ScrollPanel } from 'primereact/scrollpanel';
+import SpinnerCar from '../loader/spinner';
 
 function VistaGeneralEcositema1(props) {
   const dispatch = useAppDispatch();
@@ -31,9 +32,9 @@ function VistaGeneralEcositema1(props) {
   const loading = useAppSelector(state => state.ecosistema.loading);
   const updating = useAppSelector(state => state.ecosistema.updating);
   const updateSuccess = useAppSelector(state => state.ecosistema.updateSuccess);
-  const [reto, setReto] = useState(0);
-  const [noticia, setNoticias] = useState(0);
-  const [proyecto, setProyectos] = useState(0);
+  const [reto, setReto] = useState(null);
+  const [noticia, setNoticias] = useState(null);
+  const [proyecto, setProyectos] = useState(null);
   const [usuario, setUsurios] = useState(0);
 
   const retosMio = useRef(null);
@@ -101,63 +102,75 @@ function VistaGeneralEcositema1(props) {
   const handleSyncList = () => {};
 
   return (
-    <div className=" grid mt-2 mb-4">
-      <div className="flex sm:flex-row xl:col-6 lg:col-12 sm:col-12 md:col-12">
-        <div className="col-12 ">
-          <ComponenteCarusel id={props.id} logueado={props.logueado} ecosistemaEntity1={ecosistemaEntity} index={props.index} />
-        </div>
-      </div>
+    <div className=" grid grid-nogutter surface-0 mt-2">
+      <div className="col-12  md:col-6 p-0">
+        <div className="flex  flex-column sm:flex-row sm:justify-content-center  align-items-center text-700">
+          <div className=" flex  align-items-center mt-1 ml-3 ">
+            <div className="surface-0 shadow-3 p-3 border-1 border-50 border-round">
+              <div className="flex justify-content-between mb-3">
+                <div>
+                  <span className=" text-500  font-medium text-xl mb-3"> Retos</span>
 
-      <div className="flex  sm:flex-row xl:col-6 lg:col-12 sm:col-12 md:col-12">
-        <div className=" col-12 xl:col-12 sm:col-12 md:col-12">
-          <div className="flex sm:justify-content-end align-items-center text-700">
-            <div className=" flex  align-items-center mt-1 ml-3 ">
-              <div className="surface-0 shadow-3 p-3 border-1 border-50 border-round">
-                <div className="flex justify-content-between mb-3">
-                  <div>
-                    <span className="block text-500 font-medium text-1xl mb-3">Retos</span>
-                    <div className="text-600 font-medium text-2xl text-center">{reto}</div>
-                  </div>
-                  <div
-                    className="flex align-items-center justify-content-center bg-orange-100  border-round ml-4"
-                    style={{ width: '2.5rem', height: '2.5rem' }}
-                  >
-                    <i className="pi pi-inbox text-orange-500 text-xl"></i>
-                  </div>
+                  {reto == null ? (
+                    <div className="text-600 font-medium text-2xl text-center">
+                      <Spinner></Spinner>
+                    </div>
+                  ) : (
+                    <div className=" text-600 font-medium text-2xl text-center">{reto}</div>
+                  )}
+                </div>
+                <div
+                  className="flex align-items-center justify-content-center bg-orange-100  border-round ml-4"
+                  style={{ width: '2.5rem', height: '2.5rem' }}
+                >
+                  <i className="pi pi-inbox text-orange-500 text-xl"></i>
                 </div>
               </div>
             </div>
+          </div>
 
-            <div className=" flex  align-items-center mt-1 ml-3 ">
-              <div className="surface-0 shadow-3 p-3 border-1 border-50 border-round">
-                <div className="flex justify-content-between mb-3">
-                  <div>
-                    <span className="block text-500 font-medium text-1xl mb-3"> Noticias</span>
+          <div className=" flex  align-items-center mt-1 ml-3 ">
+            <div className="surface-0 shadow-3 p-3 border-1 border-50 border-round">
+              <div className="flex justify-content-between mb-3">
+                <div>
+                  <span className=" text-500  font-medium text-xl mb-3"> Noticias</span>
+
+                  {noticia == null ? (
+                    <div className="text-600 font-medium text-2xl text-center">
+                      <Spinner></Spinner>
+                    </div>
+                  ) : (
                     <div className="text-600 font-medium text-2xl text-center">{noticia}</div>
-                  </div>
-                  <div
-                    className="flex align-items-center justify-content-center  text-cyan-500 bg-cyan-100 border-round ml-4"
-                    style={{ width: '2.5rem', height: '2.5rem' }}
-                  >
-                    <FontAwesomeIcon icon={faNewspaper} size="lg" />
-                  </div>
+                  )}
+                </div>
+                <div
+                  className="flex align-items-center justify-content-center   bg-cyan-100 border-round ml-4"
+                  style={{ width: '2.5rem', height: '2.5rem' }}
+                >
+                  <FontAwesomeIcon icon={faNewspaper} size="lg" />
                 </div>
               </div>
             </div>
+          </div>
 
-            <div className=" flex  align-items-center mt-1 ml-3 ">
-              <div className="surface-0 shadow-3 p-3 border-1 border-50 border-round">
-                <div className="flex justify-content-between mb-3">
-                  <div>
-                    <span className="block text-500 font-medium text-1xl mb-3"> Proyectos</span>
+          <div className=" flex  align-items-center mt-1 ml-3 ">
+            <div className="surface-0 shadow-3 p-3 border-1 border-50 border-round">
+              <div className="flex justify-content-between mb-3">
+                <div>
+                  <span className=" text-500  font-medium text-xl mb-3"> Proyectos</span>
+                  {proyecto == null ? (
+                    <div className="text-600 font-medium text-2xl text-center">
+                      <Spinner></Spinner>
+                    </div>
+                  ) : (
                     <div className="text-600 font-medium text-2xl text-center">{proyecto}</div>
-                  </div>
-                  <div
-                    className="flex align-items-center justify-content-center bg-purple-100 border-round ml-4"
-                    style={{ width: '2.5rem', height: '2.5rem' }}
-                  >
-                    <i className="pi pi-map-marker text-blue-500 text-xl"></i>
-                  </div>
+                  )}
+                </div>
+                <div
+                  className="flex align-items-center justify-content-center bg-purple-100 border-round ml-4"
+                  style={{ width: '2.5rem', height: '2.5rem' }}
+                >
+                  <i className="pi pi-map-marker text-blue-500 text-xl"></i>
                 </div>
               </div>
             </div>
@@ -165,15 +178,18 @@ function VistaGeneralEcositema1(props) {
         </div>
       </div>
 
-      <div className="flex sm:flex-row xl:col-6 lg:col-12 sm:col-12 md:col-12">
-        <div className="col-12 ">
-          <div className="card mt-4 border-round-3xl  sm:h-auto ">
-            <div className="flex justify-content-between">
+      <div className="col-12  md:col-6 p-0">
+        <ComponenteCarusel id={props.id} logueado={props.logueado} ecosistemaEntity1={ecosistemaEntity} index={props.index} />
+      </div>
+
+      <div className=" col-12  md:col-6 ">
+        <div className=" col-12 p-1 ">
+          <div className="card mt-3 border-round-3xl   ">
+            <div className="flex flex-row justify-content-between">
               <div className="flex justify-content-start ">
                 <div ref={retosMio} className="text-900 text-2xl text-blue-600 font-medium ">
                   Últimos retos activos
                 </div>
-                <FontAwesomeIcon onClick={handleSyncList} className="ml-2 mt-3" icon="sync" spin={loading} />{' '}
               </div>
 
               {(ecosistemaEntity.user?.login === props.logueado.login &&
@@ -200,9 +216,9 @@ function VistaGeneralEcositema1(props) {
           </div>
         </div>
       </div>
-      <div className="flex sm:flex-row xl:col-6 lg:col-12 sm:col-12 md:col-12">
-        <div className="col-12 ">
-          <div className="card mt-4 border-round-3xl   ">
+      <div className="col-12  md:col-6 ">
+        <div className="col-12 p-1">
+          <div className="card mt-3 border-round-3xl   ">
             <div className="flex justify-content-between">
               <div className="flex justify-content-start ">
                 <div ref={noticiasMias} className="text-900 text-2xl text-blue-600 font-medium ">
@@ -232,8 +248,8 @@ function VistaGeneralEcositema1(props) {
         </div>
       </div>
 
-      <div className="flex sm:flex-row xl:col-6 lg:col-12 sm:col-12 md:col-12">
-        <div className="col-12 ">
+      <div className="col-12  md:col-6 ">
+        <div className="col-12 p-1">
           <div className="card mt-4 border-round-3xl  sm:h-auto">
             <div className="flex justify-content-start ">
               <div className="text-900 text-2xl text-blue-600 font-medium ">Proyectos</div>

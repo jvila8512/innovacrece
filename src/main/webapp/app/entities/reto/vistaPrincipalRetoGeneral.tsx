@@ -81,8 +81,8 @@ const vistaPrincipalRetoGeneral = props => {
         <div className="flex flex-column lg:flex-row xl:flex-row xl:align-items-start p-4 gap-4">
           <div className="flex flex-column ">
             <img
-              className="w-10rem h-8rem sm:w-10rem xl:w-10rem shadow-2 block xl:block mx-auto border-round"
-              src={`data:${reto.urlFotoContentType};base64,${reto.urlFoto}`}
+              className="w-full h-14rem  shadow-2  sm:w-full sm:14rem md:w-10rem md:h-8rem"
+              src={`content/uploads/${reto.urlFotoContentType}`}
               alt={reto.reto}
             />
             <div className=" font-bold text-base ">{reto.ecosistema.nombre}</div>
@@ -103,7 +103,7 @@ const vistaPrincipalRetoGeneral = props => {
                 {reto.descripcion}
               </div>
 
-              <div className=" flex  sm:flex-row md:flex-row justify-content-between align-items-center gap-3">
+              <div className="flex flex-column sm:flex-row justify-content-between align-items-center gap-3">
                 <div className="flex align-items-center gap-3">
                   <span className="flex align-items-center gap-2">
                     <i className="pi pi-calendar"></i>

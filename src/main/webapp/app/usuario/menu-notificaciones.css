@@ -53,7 +53,7 @@
   content: '';
   position: absolute;
   top: -10px;
-  left: 590px;
+  left: 440px;
   height: 20px;
   width: 20px;
   border-top: 1px solid rgb(193, 192, 192);
@@ -64,7 +64,7 @@
 
 .dropdown-menu11.active {
   opacity: 1;
-  width: 650px;
+
   visibility: visible;
   transform: translateY(40px);
   transition: 500ms ease;

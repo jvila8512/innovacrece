@@ -20,7 +20,7 @@ export const IdeaDeleteDialog = (props: RouteComponentProps<{ id: string }>) => 
   const updateSuccess = useAppSelector(state => state.idea.updateSuccess);
 
   const handleClose = () => {
-    props.history.push('/idea' + props.location.search);
+    props.history.push('entidad/idea' + props.location.search);
   };
 
   useEffect(() => {

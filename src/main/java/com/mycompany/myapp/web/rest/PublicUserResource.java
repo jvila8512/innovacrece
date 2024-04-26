@@ -1,5 +1,6 @@
 package com.mycompany.myapp.web.rest;
 
+import com.mycompany.myapp.domain.Authority;
 import com.mycompany.myapp.service.UserService;
 import com.mycompany.myapp.service.dto.UserDTO;
 import java.util.*;
@@ -61,5 +62,14 @@ public class PublicUserResource {
     @GetMapping("/authorities")
     public List<String> getAuthorities() {
         return userService.getAuthorities();
+    }
+
+    /**
+     * Gets a list of all roles.
+     * @return a string list of all roles.
+     */
+    @GetMapping("/authoritiesJson")
+    public List<Authority> getAuthoritiesJson() {
+        return userService.getAuthoritiesJson();
     }
 }

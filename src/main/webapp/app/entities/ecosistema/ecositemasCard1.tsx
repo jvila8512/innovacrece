@@ -16,7 +16,7 @@ import { IUsuarioEcosistema } from 'app/shared/model/usuario-ecosistema.model';
 import { AxiosResponse } from 'axios';
 import { getEntity as getEcosistema, getEntities } from 'app/entities/ecosistema/ecosistema.reducer';
 
-const EcositemasCard = props => {
+const EcositemasCard1 = props => {
   const dispatch = useAppDispatch();
 
   const [isNewUsuario, setNewIdea] = useState(true);
@@ -67,7 +67,7 @@ const EcositemasCard = props => {
     }
   }, [updateSuccess]);
 
-  const title = <p className="surface-overlay  h-8rem mb-2  overflow-hidden text-overflow-ellipsis">{props.ecosistema.nombre}</p>;
+  const title = <p className="surface-overlay   te   h-8rem mb-2  overflow-hidden text-overflow-ellipsis">{props.ecosistema.nombre}</p>;
   const header = <img src={`content/uploads/${props.ecosistema.logoUrlContentType}`} style={{ maxHeight: '200px' }} />;
   const footer = !isUsuario ? (
     <span>
@@ -80,18 +80,34 @@ const EcositemasCard = props => {
   );
 
   return (
-    <div>
-      <Card
-        title={title}
-        style={{ height: '30rem', width: '25rem', marginBottom: '2em' }}
-        footer={footer}
-        header={header}
-        className="shadow-6 mt-4"
-      >
-        <p className="surface-overlay  h-6rem mb-2  overflow-hidden text-overflow-ellipsis">{props.ecosistema.tematica}</p>
-      </Card>
+    <div className="p-2 ">
+      <div className=" h-30rem w-24rem max-h-30rem   border-round-xl shadow-4 mb-2 relative">
+        <div className="flex flex-column align-items-center gap-1 py-1">
+          <img
+            className=" h-13rem w-full  border-round"
+            src={`content/uploads/${props.ecosistema.logoUrlContentType}`}
+            alt={props.ecosistema.nombre}
+          />
+        </div>
+        <div className="text-xl text-400 pl-3 text-blue-800 font-medium">{props.ecosistema.nombre}</div>
+        <p className=" pl-3 surface-overlay  h-6rem   overflow-hidden text-overflow-ellipsis">{props.ecosistema.tematica}</p>
+
+        <div className="flex justify-content-end absolute bottom-0 right-0 mb-4 mr-4">
+          <div className="flex align-items-center">
+            {!isUsuario ? (
+              <span>
+                <Button label="Unirse" icon="pi pi-plus" className="p-button-primary" onClick={salvar} disabled={updating} />
+              </span>
+            ) : (
+              <span>
+                <Button label="Entrar" icon="pi pi-sign-in" className="p-button-primary" onClick={entrar} />
+              </span>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
 
-export default EcositemasCard;
+export default EcositemasCard1;

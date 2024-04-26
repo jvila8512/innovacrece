@@ -28,6 +28,7 @@ import { Skeleton } from 'primereact/skeleton';
 import SkeletonEcositemas from './SkeletonEcositemas';
 import MenuUsuarioNotificaciones from './menu-notificaciones ';
 import { reset as resetNoti } from 'app/entities/notificacion/notificacion.reducer';
+import { getEntitiesByEcosistematodasFiltrarFechasSinRespuesta, reset as resetRetos } from 'app/entities/reto/reto.reducer';
 import VistaGeneral from 'app/entities/ecosistema/VistaGeneral';
 
 const Usuario = (props: RouteComponentProps<{ index: any }>) => {
@@ -82,7 +83,7 @@ const Usuario = (props: RouteComponentProps<{ index: any }>) => {
         onClick={e => setActiveIndex(i)}
       >
         <Avatar image={`content/uploads/${options.logoUrlContentType}`} shape="circle" className="ml-2" />
-        <h5 className="text-700 text-xl text-blue-600 font-medium  p-2 "> {options.nombre}</h5>
+        <h5 className="text-700 text-xs  sm:text-md text-blue-600 font-medium  p-2 "> {options.nombre}</h5>
       </div>
     );
   };
@@ -93,87 +94,92 @@ const Usuario = (props: RouteComponentProps<{ index: any }>) => {
         style={{ cursor: 'pointer' }}
         onClick={e => setActiveIndex(i)}
       >
-        <h5 className="text-700 text-xl text-blue-600 font-medium  p-2 "> {options}</h5>
+        <h5 className="text-700 text-xs  sm:text-md text-blue-600 font-medium  p-2 "> {options}</h5>
       </div>
     );
   };
 
   return (
-    <>
-      <div className="card mt-4 mb-4">
-        <Toolbar className="mt-1 flex flex-row bg-gray-200" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
+    <div className="card p-2 mt-2 mb-2">
+      <Toolbar className="mt-1 flex flex-row bg-gray-200" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
 
-        <div className="flex flex-row mt-2 ">
-          <div className="flex justify-content-start">
-            <h5 className="text-900 text-2xl text-blue-600 font-medium mt-2 mb-2">Ecosistemas</h5>
+      <div className="flex flex-column sm:flex-row mt-2 mb-4 ">
+        <div className="flex justify-content-start">
+          <h5 className="text-900 text-2xl text-blue-600 font-medium mt-2 mb-2 ml-4">Ecosistemas</h5>
+        </div>
+        <div className="flex justify-content-end ml-auto">
+          <div className=" p-inputgroup  ">
+            <InputText value={texto} placeholder="Innovaciones" onChange={e => setTexto(e.target.value)} />
+            {texto ? (
+              <Link to={`/entidad/innovacion-racionalizacion/buscar/${texto}`} className="btn btn-primary" onClick={e => setTexto('')}>
+                <i className="pi pi-search pt-2" style={{ fontSize: '1em' }}></i>
+              </Link>
+            ) : (
+              <Link to="#" className="btn btn-secondary">
+                <i className="pi pi-search pt-2" style={{ fontSize: '1em' }}></i>
+              </Link>
+            )}
           </div>
-          <div className="flex justify-content-end ml-auto">
-            <div className=" p-inputgroup  ">
-              <InputText value={texto} placeholder="Búsqueda-Innovaciones" onChange={e => setTexto(e.target.value)} />
-              {texto ? (
-                <Link to={`/entidad/innovacion-racionalizacion/buscar/${texto}`} className="btn btn-primary" onClick={e => setTexto('')}>
-                  <i className="pi pi-search pt-2" style={{ fontSize: '1em' }}></i>
-                </Link>
-              ) : (
-                <Link to="#" className="btn btn-secondary">
-                  <i className="pi pi-search pt-2" style={{ fontSize: '1em' }}></i>
-                </Link>
-              )}
-            </div>
 
-            <div className=" p-inputgroup ml-3 ">
-              <InputText value={texto1} placeholder="Búsqueda-Proyectos" onChange={e => setTexto1(e.target.value)} />
-              {texto1 ? (
-                <Link to={`/entidad/proyectos/proyectos_buscar/${texto1}`} className="btn btn-primary" onClick={e => setTexto1('')}>
-                  <i className="pi pi-search pt-2" style={{ fontSize: '1em' }}></i>
-                </Link>
-              ) : (
-                <Link to="#" className="btn btn-secondary">
-                  <i className="pi pi-search pt-2" style={{ fontSize: '1em' }}></i>
-                </Link>
-              )}
-            </div>
+          <div className=" p-inputgroup ml-3 ">
+            <InputText value={texto1} placeholder="Proyectos" onChange={e => setTexto1(e.target.value)} />
+            {texto1 ? (
+              <Link to={`/entidad/proyectos/proyectos_buscar/${texto1}`} className="btn btn-primary" onClick={e => setTexto1('')}>
+                <i className="pi pi-search pt-2" style={{ fontSize: '1em' }}></i>
+              </Link>
+            ) : (
+              <Link to="#" className="btn btn-secondary">
+                <i className="pi pi-search pt-2" style={{ fontSize: '1em' }}></i>
+              </Link>
+            )}
           </div>
         </div>
+      </div>
 
-        {!usuarioEcosistema?.ecosistemas ? (
-          <SkeletonEcositemas />
-        ) : usuarioEcosistema?.ecosistemas?.length > 0 ? (
-          <div className="flex flex-row">
-            <TabView activeIndex={activeIndex} onTabChange={e => setActiveIndex(e.index)} scrollable>
+      {!usuarioEcosistema?.ecosistemas ? (
+        <SkeletonEcositemas />
+      ) : usuarioEcosistema?.ecosistemas?.length > 0 ? (
+        <div className="grid p-0">
+          <div className="col-12  mb-4 p-0">
+            <TabView className="p-0" activeIndex={activeIndex} onTabChange={e => setActiveIndex(e.index)} scrollable>
               <TabPanel
                 key={`card-0}`}
                 header="General"
                 headerTemplate={tabHeaderITemplate1('Información General', 0)}
                 headerClassName="flex align-items-center p-2"
+                className="p-0"
               >
                 <VistaGeneral miLista={miLista} logueado={account} index={0} />
               </TabPanel>
 
-              {usuarioEcosistema.ecosistemas?.map((usuario, i) => (
-                <TabPanel
-                  key={`card-${i + 1}`}
-                  header={usuario.nombre}
-                  headerTemplate={tabHeaderITemplate(usuario, i + 1)}
-                  headerClassName="flex align-items-center p-2"
-                >
-                  <ScrollPanel style={{ width: '100%', height: '1000px' }}>
-                    <VistaGeneralEcositema1 id={usuario.id} logueado={account} index={i} />
-                  </ScrollPanel>
-                </TabPanel>
-              ))}
+              {usuarioEcosistema.ecosistemas?.map(
+                (usuario, i) =>
+                  usuario.activo && (
+                    <TabPanel
+                      key={`card-${i + 1}`}
+                      header={usuario.nombre}
+                      headerTemplate={tabHeaderITemplate(usuario, i + 1)}
+                      headerClassName="flex align-items-center p-2"
+                      className="!p-0"
+                    >
+                      <ScrollPanel style={{ width: '100%', height: '1000px' }}>
+                        <VistaGeneralEcositema1 id={usuario.id} logueado={account} index={i} />
+                      </ScrollPanel>
+                    </TabPanel>
+                  )
+              )}
             </TabView>
           </div>
-        ) : (
-          <div className="alert alert-warning">
-            No esta asociado a ningún ecosistema de la plataforma
-            <Link to={`/entidad/ecosistema/card`} className="btn btn-primary rounded-pill m-3 " id="jh-tre" data-cy="reto">
-              <span className="font-white  p-2">Unirse a un Ecosistema</span>
-            </Link>
-          </div>
-        )}
-      </div>
-    </>
+        </div>
+      ) : (
+        <div className="alert alert-warning">
+          No esta asociado a ningún ecosistema de la plataforma
+          <Link to={`/entidad/ecosistema/card`} className="btn btn-primary rounded-pill m-3 " id="jh-tre" data-cy="reto">
+            <span className="font-white  p-2">Unirse a un Ecosistema</span>
+          </Link>
+        </div>
+      )}
+    </div>
   );
 };
 export default Usuario;

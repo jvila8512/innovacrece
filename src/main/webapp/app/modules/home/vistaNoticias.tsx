@@ -157,8 +157,8 @@ const VistaNoticia = props => {
       {loading ? (
         <SkaletonNoticias />
       ) : noticiasList && noticiasList.length > 0 ? (
-        <div className="surface-section px-4 py-8 md:px-6 lg:px-8 text-center">
-          <div className="mb-1 font-bold text-900 text-5xl  ">
+        <div className="surface-section px-1 py-4 md:px-6 lg:px-8 text-center">
+          <div className="mb-3 font-bold text-900 text-2xl sm:text-5xl  ">
             <span className="text-blue-600">Actualidad</span>
           </div>
 

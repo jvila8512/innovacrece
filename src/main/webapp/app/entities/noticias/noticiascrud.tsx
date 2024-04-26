@@ -207,11 +207,11 @@ export const NoticiasCrud = (props: RouteComponentProps<{ id: string; index: str
       <div className="flex align-items-center flex-column">
         {isNew ? (
           <span style={{ fontSize: '1.2em', color: 'var(--text-color-secondary)' }} className="my-5">
-            Puede arrastrar y soltar el icono aquí
+            Puede arrastrar y soltar la imagen aquí
           </span>
         ) : (
           <span style={{ fontSize: '1.2em', color: 'var(--text-color-secondary)' }} className="my-5">
-            Puede arrastrar y soltar el icono para Modificar
+            Puede arrastrar y soltar la imagen para Modificar
           </span>
         )}
       </div>
@@ -257,6 +257,7 @@ export const NoticiasCrud = (props: RouteComponentProps<{ id: string; index: str
   const confirmDeleteSelected = rowNoticia => {
     setDeleteNoticiasDialog(true);
     setSelectedNoticias(rowNoticia);
+    setSelectedFile(null);
   };
   const atrasvista = () => {
     props.history.push(`/entidad/noticias/grid-noticias/${props.match.params.id}/${props.match.params.index}`);
@@ -287,7 +288,7 @@ export const NoticiasCrud = (props: RouteComponentProps<{ id: string; index: str
   const descripcionBodyTemplate = rowData => {
     return (
       <>
-        <span className=" surface-overlay w-full h-3rem overflow-hidden text-overflow-ellipsis">{rowData.descripcion}</span>
+        <span className=" pl-2 surface-overlay w-full h-3rem overflow-hidden text-overflow-ellipsis">{rowData.descripcion}</span>
       </>
     );
   };
@@ -351,6 +352,7 @@ export const NoticiasCrud = (props: RouteComponentProps<{ id: string; index: str
   };
   const deleteNoticia = () => {
     dispatch(deleteEntity(selectedNoticias.id));
+    borrar(selectedNoticias.urlFotoContentType);
     setDeleteNoticiasDialog(false);
     setSelectedNoticias(null);
   };
@@ -415,7 +417,7 @@ export const NoticiasCrud = (props: RouteComponentProps<{ id: string; index: str
                 header="Noticia"
                 sortable
                 body={descripcionBodyTemplate}
-                style={{ width: '40%', alignContent: 'right' }}
+                style={{ width: '40%' }}
                 headerStyle={{ minWidth: '15rem' }}
               ></Column>
               <Column field="publica" sortable header="Estado" body={publicaTemplate} headerStyle={{ minWidth: '7rem' }}></Column>
@@ -457,6 +459,7 @@ export const NoticiasCrud = (props: RouteComponentProps<{ id: string; index: str
                       data-cy="urlFotoContentType"
                       required
                       readOnly
+                      hidden
                       id="urlFotoContentType"
                       type="text"
                     />

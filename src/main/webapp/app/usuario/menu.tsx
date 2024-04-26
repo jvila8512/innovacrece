@@ -173,7 +173,7 @@ const MenuUsuario = props => {
             {props.account1?.authorities?.find(rol => rol === 'ROLE_ADMIN') && (
               <div className="flex flex-column">
                 <Link
-                  to={`admin/user-management`}
+                  to={`admin/user_crud`}
                   className="  flex w-full  align-items-center justify-content-center font-medium menuOver "
                   id="jh-tre1"
                   data-cy="menu1"
@@ -203,23 +203,6 @@ const MenuUsuario = props => {
                   data-cy="menu1"
                 >
                   <span className="p-2">Proyectos</span>
-                </Link>
-
-                <Link
-                  to={`/entidad/servicios`}
-                  className="  flex w-full  align-items-center justify-content-center font-medium menuOver"
-                  id="jh-tre1"
-                  data-cy="menu1"
-                >
-                  <span className="p-2">Servicios</span>
-                </Link>
-                <Link
-                  to={`/entidad/change-macker`}
-                  className=" border-0 flex w-full  align-items-center justify-content-center  font-medium menuOver"
-                  id="jh-tre1"
-                  data-cy="menu1"
-                >
-                  <span className="p-2"> Change-macker</span>
                 </Link>
               </div>
             )}

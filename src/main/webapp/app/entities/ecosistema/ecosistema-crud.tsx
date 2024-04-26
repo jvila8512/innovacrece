@@ -43,6 +43,8 @@ import {
   deletefile,
 } from 'app/entities/Files/files.reducer';
 import { FileUpload } from 'primereact/fileupload';
+import { Chip } from 'primereact/chip';
+import SpinnerCar from '../loader/spinner';
 
 const EcosistemaCrud = (props: RouteComponentProps<{ id: string }>) => {
   const dispatch = useAppDispatch();
@@ -135,7 +137,11 @@ const EcosistemaCrud = (props: RouteComponentProps<{ id: string }>) => {
     setGlobalFilterValue(value);
   };
   const nombreBodyTemplate = rowData => {
-    return <>{rowData.nombre}</>;
+    return (
+      <>
+        <span className="pl-5">{rowData.nombre}</span>
+      </>
+    );
   };
   const adminBodyTemplate = rowData => {
     return (
@@ -152,21 +158,22 @@ const EcosistemaCrud = (props: RouteComponentProps<{ id: string }>) => {
   };
 
   const tematicaBodyTemplate = rowData => {
-    return <>{rowData.tematica}</>;
+    return (
+      <>
+        <span className="pl-5">{rowData.tematica}</span>
+      </>
+    );
   };
 
   const userBodyTemplate = rowData => {
     return (
-      <>
+      <div className="flex flex-column ">
         {rowData.users
           ? rowData?.users.map((val, j) => (
-              <span className="text-lg font-bold text-primary" key={j}>
-                {val.login}
-                {j === rowData?.users.length - 1 ? '' : ', '}
-              </span>
+              <Chip key={j} label={val.login} image={`content/uploads/${val.imageUrl}`} className="mr-3 mb-2" />
             ))
           : null}
-      </>
+      </div>
     );
   };
   const userBodyTemplateFiltrado = rowData => {
@@ -223,7 +230,7 @@ const EcosistemaCrud = (props: RouteComponentProps<{ id: string }>) => {
   };
   const header = (
     <div className="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
-      <h3 className="m-0">Ecosistemas:</h3>
+      <h3 className="text-900 text-2xl text-blue-600 font-medium">Ecosistemas:</h3>
 
       <span className="block mt-2 md:mt-0 p-input-icon-left">
         <i className="pi pi-search" />
@@ -328,7 +335,8 @@ const EcosistemaCrud = (props: RouteComponentProps<{ id: string }>) => {
       ...ecosistemaEntity,
       ...values,
       retosCant: reto,
-      logoUrlContentType: selectedFile ? selectedFile.name : values.logo,
+      logoUrlContentType: selectedFile ? selectedFile.name : values.logoUrlContentType,
+
       ecosistemaRol: ecosistemaRols.find(it => it.id.toString() === values.ecosistemaRol.toString()),
       user: selectedAdmin ? selectedAdmin : account,
     };
@@ -399,6 +407,7 @@ const EcosistemaCrud = (props: RouteComponentProps<{ id: string }>) => {
 
     setSelectedEcosistemaFiltrado(copia);
   };
+
   const deleteEcosistemaDialogFooter = (
     <>
       <Button label="No" icon="pi pi-times" className="p-button-text" onClick={hideDeleteEcosistemaDialog} />
@@ -785,7 +794,7 @@ const EcosistemaCrud = (props: RouteComponentProps<{ id: string }>) => {
           <Dialog visible={gestorDialog} style={{ width: '450px' }} header="Gestores" modal onHide={hideGestorDialog}>
             <div className="mt-3 mb-4">
               {loading ? (
-                <p>Cargando...</p>
+                <SpinnerCar />
               ) : (
                 <div className=" justify-content-center">
                   <div className="row">

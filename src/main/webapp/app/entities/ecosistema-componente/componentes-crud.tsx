@@ -30,6 +30,8 @@ import {
 } from 'app/entities/Files/files.reducer';
 import { FileUpload } from 'primereact/fileupload';
 import { Tag } from 'primereact/tag';
+import Cargando from '../loader/cargando';
+import { toast } from 'react-toastify';
 
 const ComponentesCrud = (props: RouteComponentProps<{ id: string; index: string }>) => {
   const dispatch = useAppDispatch();
@@ -43,7 +45,7 @@ const ComponentesCrud = (props: RouteComponentProps<{ id: string; index: string 
 
   const componentes = useAppSelector(state => state.componentes.entities);
 
-  const regex = /^(?:https?:\/\/)[a-zA-Z0-9]+(?:\.[a-zA-Z]+)+$/;
+  const regex = /^(?:https?:\/\/)[a-zA-Z0-9.-]+(:\d+)?(\/\w+)*$/;
 
   const emptyComponente = {
     id: null,
@@ -88,6 +90,8 @@ const ComponentesCrud = (props: RouteComponentProps<{ id: string; index: string 
   const updatingFile = useAppSelector(state => state.files.updating);
   const updateSuccessFile = useAppSelector(state => state.files.updateSuccess);
   const loadingFile = useAppSelector(state => state.files.loading);
+
+  const [cargandoFile, setcargandoFile] = useState(false);
 
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileModificar, setfileModificar] = useState(null);
@@ -234,13 +238,21 @@ const ComponentesCrud = (props: RouteComponentProps<{ id: string; index: string 
     linkk.setAttribute('download', fileName);
     document.body.appendChild(linkk);
     linkk.click();
+    setcargandoFile(false);
   };
 
   const descargarDocumento = row => {
+    setcargandoFile(true);
     const retosFiltrar = getArchivo(row.documentoUrlContentType);
-    retosFiltrar.then(response => {
-      handleFileDownload(response.data, row.documentoUrlContentType);
-    });
+    retosFiltrar
+      .then(response => {
+        handleFileDownload(response.data, row.documentoUrlContentType);
+      })
+      .catch(error => {
+        // eslint-disable-next-line no-console
+        console.error('Error al obtener el archivo: ', error);
+        toast.error('Error al obtener el archivo');
+      });
   };
 
   const documentoBodyTemplate = rowData => {
@@ -266,7 +278,7 @@ const ComponentesCrud = (props: RouteComponentProps<{ id: string; index: string 
   const descripcionBodyTemplate = rowData => {
     return (
       <>
-        <span className="flex sm:align-items-center"> {rowData.descripcion}</span>
+        <span className="pl-5 text-justify"> {rowData.descripcion}</span>
       </>
     );
   };
@@ -320,6 +332,7 @@ const ComponentesCrud = (props: RouteComponentProps<{ id: string; index: string 
   };
   const deleteEcosistema = () => {
     dispatch(deleteEntity(selectedComponente.id));
+    borrar(selectedComponente.documentoUrlContentType);
     setDeleteComponenteDialog(false);
     setSelectedComponente(null);
   };
@@ -340,199 +353,190 @@ const ComponentesCrud = (props: RouteComponentProps<{ id: string; index: string 
   };
 
   return (
-    <>
-      <div className="grid crud-demo mt-3 mb-4">
-        <div className="col-12">
-          <div className="card">
-            <Toolbar className="mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
-
-            <DataTable
-              ref={dt}
-              value={componenteList}
-              selection={selectedComponente}
-              onSelectionChange={e => setSelectedComponente(e.value)}
-              dataKey="id"
-              rows={10}
-              className="datatable-responsive"
-              emptyMessage="No hay Componentes para el Ecosistema..."
-              header={header}
-              responsiveLayout="stack"
-            >
-              <Column field="id" header="Id" hidden headerStyle={{ minWidth: '15rem' }}></Column>
-              <Column
-                field="nombre"
-                header="Tipo Componente"
-                sortable
-                body={nombreBodyTemplate}
-                headerStyle={{ minWidth: '15rem' }}
-              ></Column>
-              <Column
-                field="componentehijo"
-                header="Componente"
-                sortable
-                body={componenteBodyTemplate}
-                headerStyle={{ minWidth: '15rem' }}
-              ></Column>
-
-              <Column
-                field="componente"
-                header="Descripción"
-                sortable
-                body={descripcionBodyTemplate}
-                style={{ width: '50%' }}
-                headerStyle={{ minWidth: '15rem' }}
-              ></Column>
-              <Column
-                field="documentoUrl"
-                header="Documento"
-                sortable
-                body={documentoBodyTemplate}
-                headerStyle={{ minWidth: '15rem' }}
-              ></Column>
-
-              <Column field="link" header="Dirección" sortable body={linkBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
-
-              <Column body={actionBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
-            </DataTable>
-
-            <Dialog
-              visible={componenteDialogNew}
-              style={{ width: '450px' }}
+    <div className="grid crud-demo mt-3 mb-4">
+      <div className="col-12">
+        <div className="card">
+          <Toolbar className="mb-4" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
+          <DataTable
+            ref={dt}
+            value={componenteList}
+            selection={selectedComponente}
+            onSelectionChange={e => setSelectedComponente(e.value)}
+            dataKey="id"
+            rows={10}
+            className="datatable-responsive"
+            emptyMessage="No hay Componentes para el Ecosistema..."
+            header={header}
+            responsiveLayout="stack"
+          >
+            <Column field="id" header="Id" hidden headerStyle={{ minWidth: '15rem' }}></Column>
+            <Column field="nombre" header="Tipo Componente" sortable body={nombreBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
+            <Column
+              field="componentehijo"
               header="Componente"
-              modal
-              className="p-fluid  "
-              onHide={hideDialogNuevo}
-            >
-              <Row className="justify-content-center">
-                {loading ? (
-                  <p>Cargando...</p>
-                ) : (
-                  <ValidatedForm defaultValues={defaultValues()} onSubmit={saveEntity}>
-                    {!isNew ? (
-                      <ValidatedField
-                        name="id"
-                        required
-                        readOnly
-                        hidden
-                        id="ecosistema-componente-id"
-                        label={translate('global.field.id')}
-                        validate={{ required: true }}
-                      />
-                    ) : null}
+              sortable
+              body={componenteBodyTemplate}
+              headerStyle={{ minWidth: '15rem' }}
+            ></Column>
+
+            <Column
+              field="componente"
+              header="Descripción"
+              sortable
+              body={descripcionBodyTemplate}
+              style={{ width: '50%' }}
+              headerStyle={{ minWidth: '15rem' }}
+            ></Column>
+            <Column
+              field="documentoUrl"
+              header="Documento"
+              sortable
+              body={documentoBodyTemplate}
+              headerStyle={{ minWidth: '15rem' }}
+            ></Column>
+
+            <Column field="link" header="Dirección" sortable body={linkBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
+
+            <Column body={actionBodyTemplate} headerStyle={{ minWidth: '10rem' }}></Column>
+          </DataTable>
+          {cargandoFile && <Cargando />}
+          <Dialog
+            visible={componenteDialogNew}
+            style={{ width: '450px' }}
+            header="Componente"
+            modal
+            className="p-fluid  "
+            onHide={hideDialogNuevo}
+          >
+            <Row className="justify-content-center">
+              {loading ? (
+                <p>Cargando...</p>
+              ) : (
+                <ValidatedForm defaultValues={defaultValues()} onSubmit={saveEntity}>
+                  {!isNew ? (
                     <ValidatedField
-                      label={translate('jhipsterApp.ecosistemaComponente.componentehijo')}
-                      id="ecosistema-componente-componentehijo"
-                      name="componentehijo"
-                      data-cy="componentehijo"
-                      type="text"
-                      validate={{
-                        required: { value: true, message: translate('entity.validation.required') },
-                      }}
-                    />
-                    <ValidatedField
-                      label={translate('jhipsterApp.ecosistemaComponente.descripcion')}
-                      id="ecosistema-componente-descripcion"
-                      name="descripcion"
-                      data-cy="descripcion"
-                      type="textarea"
-                      validate={{
-                        required: { value: true, message: translate('entity.validation.required') },
-                      }}
-                    />
-                    <ValidatedField
-                      label={translate('jhipsterApp.ecosistemaComponente.link')}
-                      id="ecosistema-componente-link"
-                      name="link"
-                      data-cy="link"
-                      type="text"
-                      validate={{
-                        validate: v =>
-                          (!(v.length === 0) ? regex.test(v) : true) ||
-                          'La URL debe comenzar con "https:// o http://" y tener un dominio válido',
-                      }}
-                    />
-                    <ValidatedField
-                      name="documentoUrlContentType"
-                      data-cy="documentoUrlContentType"
+                      name="id"
                       required
                       readOnly
                       hidden
-                      id="documentoUrlContentType"
-                      type="text"
+                      id="ecosistema-componente-id"
+                      label={translate('global.field.id')}
+                      validate={{ required: true }}
                     />
-                    <FileUpload
-                      ref={fileUploadRef}
-                      name="demo[1]"
-                      accept="application/pdf"
-                      maxFileSize={1000000}
-                      chooseLabel={isNew ? 'Suba el documento' : 'Suba el documento nuevo'}
-                      uploadLabel="Modificar"
-                      onSelect={onTemplateSelect}
-                      onUpload={onUpload}
-                      customUpload
-                      uploadHandler={handleFileUpload}
-                      headerTemplate={headerTemplate}
-                      itemTemplate={itemTemplate}
-                      invalidFileSizeMessageSummary="Tamaño del archivo no válido"
-                      invalidFileSizeMessageDetail="El tamaño máximo de carga es de 1MB"
-                      emptyTemplate={emptyTemplate}
-                      chooseOptions={chooseOptions}
-                      uploadOptions={uploadOptions}
-                      cancelOptions={cancelOptions}
-                    />
-                    <ValidatedField
-                      id="ecosistema-componente-componente"
-                      name="componente"
-                      data-cy="componente"
-                      label={translate('jhipsterApp.ecosistemaComponente.componente')}
-                      type="select"
-                      validate={{
-                        required: { value: true, message: translate('entity.validation.required') },
-                      }}
-                    >
-                      <option value="" key="0" />
-                      {componentes
-                        ? componentes.map(otherEntity => (
-                            <option value={otherEntity.id} key={otherEntity.id}>
-                              {otherEntity.componente}
-                            </option>
-                          ))
-                        : null}
-                    </ValidatedField>
-                    &nbsp;
-                    <Button color="primary" id="save-entity" data-cy="entityCreateSaveButton" type="submit" disabled={updating}>
-                      <span className="m-auto pl-2">
-                        <FontAwesomeIcon icon="save" />
-                        &nbsp;
-                        <Translate contentKey="entity.action.save">Save</Translate>
-                      </span>
-                    </Button>
-                  </ValidatedForm>
-                )}
-              </Row>
-            </Dialog>
+                  ) : null}
+                  <ValidatedField
+                    label={translate('jhipsterApp.ecosistemaComponente.componentehijo')}
+                    id="ecosistema-componente-componentehijo"
+                    name="componentehijo"
+                    data-cy="componentehijo"
+                    type="text"
+                    validate={{
+                      required: { value: true, message: translate('entity.validation.required') },
+                    }}
+                  />
+                  <ValidatedField
+                    label={translate('jhipsterApp.ecosistemaComponente.descripcion')}
+                    id="ecosistema-componente-descripcion"
+                    name="descripcion"
+                    data-cy="descripcion"
+                    type="textarea"
+                    validate={{
+                      required: { value: true, message: translate('entity.validation.required') },
+                    }}
+                  />
+                  <ValidatedField
+                    label={translate('jhipsterApp.ecosistemaComponente.link')}
+                    id="ecosistema-componente-link"
+                    name="link"
+                    data-cy="link"
+                    type="text"
+                    validate={{
+                      validate: v =>
+                        (!(v.length === 0) ? regex.test(v) : true) ||
+                        'La URL debe comenzar con "https:// o http://" y tener un dominio válido',
+                    }}
+                  />
+                  <ValidatedField
+                    name="documentoUrlContentType"
+                    data-cy="documentoUrlContentType"
+                    required
+                    readOnly
+                    hidden
+                    id="documentoUrlContentType"
+                    type="text"
+                  />
+                  <FileUpload
+                    ref={fileUploadRef}
+                    name="demo[1]"
+                    accept="application/pdf"
+                    maxFileSize={1000000}
+                    chooseLabel={isNew ? 'Suba el documento' : 'Suba el documento nuevo'}
+                    uploadLabel="Modificar"
+                    onSelect={onTemplateSelect}
+                    onUpload={onUpload}
+                    customUpload
+                    uploadHandler={handleFileUpload}
+                    headerTemplate={headerTemplate}
+                    itemTemplate={itemTemplate}
+                    invalidFileSizeMessageSummary="Tamaño del archivo no válido"
+                    invalidFileSizeMessageDetail="El tamaño máximo de carga es de 1MB"
+                    emptyTemplate={emptyTemplate}
+                    chooseOptions={chooseOptions}
+                    uploadOptions={uploadOptions}
+                    cancelOptions={cancelOptions}
+                  />
+                  <ValidatedField
+                    id="ecosistema-componente-componente"
+                    name="componente"
+                    data-cy="componente"
+                    label={translate('jhipsterApp.ecosistemaComponente.componente')}
+                    type="select"
+                    validate={{
+                      required: { value: true, message: translate('entity.validation.required') },
+                    }}
+                  >
+                    <option value="" key="0" />
+                    {componentes
+                      ? componentes.map(otherEntity => (
+                          <option value={otherEntity.id} key={otherEntity.id}>
+                            {otherEntity.componente}
+                          </option>
+                        ))
+                      : null}
+                  </ValidatedField>
+                  &nbsp;
+                  <Button color="primary" id="save-entity" data-cy="entityCreateSaveButton" type="submit" disabled={updating}>
+                    <span className="m-auto pl-2">
+                      <FontAwesomeIcon icon="save" />
+                      &nbsp;
+                      <Translate contentKey="entity.action.save">Save</Translate>
+                    </span>
+                  </Button>
+                </ValidatedForm>
+              )}
+            </Row>
+          </Dialog>
 
-            <Dialog
-              visible={componenteDeleteDialog}
-              style={{ width: '450px' }}
-              header="Confirmar"
-              modal
-              footer={deleteComponenteDialogFooter}
-              onHide={hideDeleteComponenteDialog}
-            >
-              <div className="flex align-items-center justify-content-center">
-                <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
-                {selectedComponente && (
-                  <span>
-                    ¿Seguro que quiere eliminar el Componente: <b>{selectedComponente?.componente?.componente}</b> del Ecosistema?
-                  </span>
-                )}
-              </div>
-            </Dialog>
-          </div>
+          <Dialog
+            visible={componenteDeleteDialog}
+            style={{ width: '450px' }}
+            header="Confirmar"
+            modal
+            footer={deleteComponenteDialogFooter}
+            onHide={hideDeleteComponenteDialog}
+          >
+            <div className="flex align-items-center justify-content-center">
+              <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
+              {selectedComponente && (
+                <span>
+                  ¿Seguro que quiere eliminar el Componente: <b>{selectedComponente?.componente?.componente}</b> del Ecosistema?
+                </span>
+              )}
+            </div>
+          </Dialog>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

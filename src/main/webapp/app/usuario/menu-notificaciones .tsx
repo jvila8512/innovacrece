@@ -38,6 +38,7 @@ const MenuUsuarioNotificaciones = props => {
 
     return () => {
       document.removeEventListener('mousedown', handler1);
+      dispatch(reset());
     };
   }, []);
 
@@ -46,8 +47,8 @@ const MenuUsuarioNotificaciones = props => {
       <div className="flex flex-row" ref={menuRef}>
         <div
           className="menu-trigger1 flex flex-row"
-          onMouseDown={() => {
-            open(true);
+          onClick={() => {
+            setOpen1(true);
           }}
           onMouseEnter={() => {
             setOpen1(true);
@@ -66,7 +67,7 @@ const MenuUsuarioNotificaciones = props => {
           </i>
         </div>
 
-        <div className={`dropdown-menu11  ${open1 ? 'active' : 'inactive'} card `}>
+        <div className={`dropdown-menu11  ${open1 ? 'active' : 'inactive'} card max-w-30rem`}>
           <div className="flex flex-row mt-2 relative">
             <div className="flex justify-content-start mb-3">
               <h5 className="text-900 text-2xl  font-medium  mb-2">Notificaciones</h5>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="groovy" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f996acf7-4b9d-4140-b576-2e6897a55ee9">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Usuarios" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f996acf7-4b9d-4140-b576-2e6897a55ee9">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
@@ -12,6 +12,9 @@
 	</queryString>
 	<field name="id" class="java.lang.Integer"/>
 	<field name="login" class="java.lang.String"/>
+	<field name="firstName" class="java.lang.String"/>
+	<field name="lastName" class="java.lang.String"/>
+	<field name="email" class="java.lang.String"/>
 	<background>
 		<band/>
 	</background>
@@ -42,14 +45,7 @@
 				<reportElement x="-20" y="20" width="595" height="1" forecolor="#666666" uuid="9af1726c-93de-45b0-86ea-42a9657ad00c"/>
 			</line>
 			<staticText>
-				<reportElement mode="Opaque" x="0" y="0" width="46" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="f798ccb6-24fc-4080-8fff-0308daf12678"/>
-				<textElement textAlignment="Center">
-					<font size="14" isBold="true"/>
-				</textElement>
-				<text><![CDATA[id]]></text>
-			</staticText>
-			<staticText>
-				<reportElement mode="Opaque" x="57" y="1" width="92" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="07ec5e41-df4a-44c4-a158-4655b7c4f559"/>
+				<reportElement mode="Opaque" x="8" y="1" width="92" height="20" forecolor="#006699" backcolor="#E6E6E6" uuid="07ec5e41-df4a-44c4-a158-4655b7c4f559"/>
 				<textElement textAlignment="Center">
 					<font size="14" isBold="true"/>
 				</textElement>
@@ -84,18 +80,25 @@
 				<reportElement positionType="FixRelativeToBottom" x="0" y="19" width="555" height="1" uuid="c340810b-5a5a-4763-8875-a06bc469bd76"/>
 			</line>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="0" y="-1" width="46" height="20" uuid="dc40d730-9e6c-4ff3-90f2-d5c212c539a8"/>
-				<textElement textAlignment="Center">
-					<font size="14"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true">
-				<reportElement x="57" y="2" width="92" height="18" uuid="79ae4c38-6e6b-43e4-9d13-0256ff302e30"/>
+				<reportElement x="8" y="0" width="92" height="18" uuid="79ae4c38-6e6b-43e4-9d13-0256ff302e30"/>
 				<textElement>
 					<font size="14"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{login}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="188" y="0" width="100" height="20" uuid="d44a886e-71b9-4026-92dc-f3b2131b8b25"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{firstName}+$F{lastName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="397" y="0" width="100" height="20" uuid="c8b608d0-1ba7-4b43-9b63-988b7d9edac6"/>
+				<textElement>
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{email}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

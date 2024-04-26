@@ -13,30 +13,50 @@ const setupAxiosInterceptors = onUnauthenticated => {
     }
     return config;
   };
+
   const onResponseSuccess = response => response;
 
   const onResponseError = err => {
     const status = err.status || (err.response ? err.response.status : 0);
 
-    if (status === 403 || status === 401) {
+    if (status === 403) {
       const customErrorMessage = 'No autorizado. No tiene permisos para acceder a la página.';
+      err.response.data.message = customErrorMessage;
       err.message = customErrorMessage;
-      onUnauthenticated();
-    }
-    if (err.response && status === 500) {
-      const customErrorMessage = err.response.data.detail;
-      err.response.data.message = 'Error interno del servidor.';
-      err.message = 'Error interno del servidor.';
     }
 
+    if (status === 401) {
+      const customErrorMessage = 'Su sesión ha caducado.';
+      err.message = customErrorMessage;
+      err.response.data.message = customErrorMessage;
+      onUnauthenticated();
+    }
+    if (status === 500) {
+      const customErrorMessage1 = err.response.data.detail;
+
+      // Verificar si la cadena 'Error interno del servidor' está presente en customErrorMessage
+      if (customErrorMessage1.includes('delete from')) {
+        // eslint-disable-next-line no-console
+        console.log('La cadena "Error interno del servidor" está presente en customErrorMessage');
+        const customErrorMessage = 'No se puede eliminar. Contacte al Administrador.';
+        err.response.data.message = customErrorMessage;
+      } else {
+        // eslint-disable-next-line no-console
+        console.log('Error interno del servidor.............');
+        const customErrorMessage = 'Contacte al Administrador.ok';
+        err.response.data.message = customErrorMessage;
+        err.message = customErrorMessage;
+      }
+    }
     if (status === 504) {
       const customErrorMessage = 'Error en el servidor...';
       err.response.data.message = 'Error interno del servidor..';
     }
-    if (err.code === 'ECONNABORTED' && err.message.includes('timeout')) {
+    if (err.code === 'ECONNABORTED') {
       // Aquí puedes personalizar el mensaje de error cuando se excede el tiempo de espera
-      const customErrorMessage = 'Conexión muy lenta. Se ha excedido el tiempo de espera de la solicitud';
+      const customErrorMessage = 'Conexión lenta. Se ha excedido el tiempo de espera de la solicitud';
       err.message = customErrorMessage;
+      err.response.data.message = customErrorMessage;
     }
 
     return Promise.reject(err);

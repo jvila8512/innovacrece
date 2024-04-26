@@ -50,7 +50,11 @@ const EcosistemasCarusel = props => {
         <div className="product-item-content ">
           <Link to={`ecosistema/vistaprincipal/${ecosistema.id}`} id="jh-tre" data-cy="ecosistemas">
             <div className="mb-3">
-              <img src={`content/uploads/${ecosistema.logoUrlContentType}`} style={{ width: '300px', height: '200px' }} />
+              <img
+                src={`content/uploads/${ecosistema.logoUrlContentType}`}
+                className="w-full h-14rem  shadow-2  sm:w-full sm:14rem md:w-10rem md:h-8rem"
+              />
+              <img src={`data:${ecosistema.logoUrlContentType};base64,${ecosistema.logoUrl}`} style={{ width: '300px', height: '200px' }} />
             </div>
           </Link>
           <div className="mb-3 font-bold text-2xl">
@@ -88,8 +92,8 @@ const EcosistemasCarusel = props => {
       {loading ? (
         <SkaletonEcositemas />
       ) : ecosistemaList && ecosistemaList.length > 0 ? (
-        <div className="surface-section   px-4 py-8 md:px-6 lg:px-8 ">
-          <div className="mb-3 font-bold text-900 text-5xl  ">
+        <div className="surface-section   px-1 py-4 md:px-6 ">
+          <div className="mb-3 font-bold text-900 text-2xl sm:text-5xl  ">
             <span className="text-blue-600">Ecosistemas</span>
           </div>
 
@@ -100,20 +104,23 @@ const EcosistemasCarusel = props => {
                   <Link to={`/usuario-panel/${buscarÎndexUsuarioEcositema(ecosistema)}`} id="jh-tre" data-cy="ecosistemas">
                     <div className="mb-3">
                       <img
-                        src={`data:${ecosistema.logoUrlContentType};base64,${ecosistema.logoUrl}`}
-                        style={{ width: '300px', height: '200px' }}
+                        src={`content/uploads/${ecosistema.logoUrlContentType}`}
+                        className="w-full h-15rem  shadow-2  sm:w-full sm:h-14rem md:w-10rem md:h-8rem"
                       />
                     </div>
                   </Link>
                 ) : (
                   <Link to={`/entidad/ecosistema/card`} id="jh-tre" data-cy="ecosistemas">
                     <div className="mb-3">
-                      <img src={`content/uploads/${ecosistema.logoUrlContentType}`} style={{ width: '300px', height: '200px' }} />
+                      <img
+                        src={`content/uploads/${ecosistema.logoUrlContentType}`}
+                        className="w-full h-15rem  shadow-2  sm:w-full sm:h-14rem md:w-10rem md:h-8rem"
+                      />
                     </div>
                   </Link>
                 )}
 
-                <div className="mb-3 font-bold text-2xl">
+                <div className="mb-3 font-bold  text-xl sm:text-2xl">
                   <span className="  text-blue-600">{ecosistema.nombre}</span>
                 </div>
 

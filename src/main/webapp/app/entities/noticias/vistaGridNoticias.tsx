@@ -16,6 +16,7 @@ import { Toolbar } from 'primereact/toolbar';
 import { Button } from 'primereact/button';
 
 import { getEntity } from '../../entities/ecosistema/ecosistema.reducer';
+import SpinnerCar from '../loader/spinner';
 
 const VistaGridNoticias = (props: RouteComponentProps<{ id: string; index: string }>) => {
   const dispatch = useAppDispatch();
@@ -73,7 +74,7 @@ const VistaGridNoticias = (props: RouteComponentProps<{ id: string; index: strin
       <div className="col-12 border-round-xl shadow-4 mb-2">
         <div className="flex flex-column  justify-content-center align-items-center">
           <img
-            className="w-9 sm:w-10rem xl:w-8rem shadow-2 block xl:block mx-auto border-round"
+            className="w-full h-14rem  shadow-2  sm:w-full sm:14rem md:w-10rem md:h-8rem"
             src={`data:${reto.urlFotoContentType};base64,${reto.urlFoto}`}
             alt={reto.titulo}
           />
@@ -103,27 +104,23 @@ const VistaGridNoticias = (props: RouteComponentProps<{ id: string; index: strin
 
   const gridItem = reto => {
     return (
-      <div className="flex md:justify-content-center sm:justify-content-center col-12 sm:col-12 md:col-6 lg:col-6 xl:col-3 ">
-        <div className="h-30rem w-24rem max-w-30rem max-h-30rem p-4 border-round-xl shadow-4 mb-2 relative ">
-          <div className="flex flex-column justify-content-center align-items-center ">
-            <Link to={`/entidad/noticias/ver-noticias`} id="jh-tre" data-cy="noticia">
-              <img
-                className="w-9 h-9 md:w-12rem xl:w-14rem lg:w-14rem md:w-12rem sm:h-12rem xl:h-10rem lg:h-14rem md:h-12rem shadow-2  border-round"
-                src={`content/uploads/${reto.urlFotoContentType}`}
-                alt={reto.titulo}
-              />
-            </Link>
+      <div className="flex  col-12 sm:col-12 md:col-6 lg:col-6 xl:col-3 pl-2 ">
+        <div className=" h-26rem w-24rem max-w-30rem max-h-30rem p-4 border-round-xl shadow-4 mb-2 relative  ">
+          <div className="flex flex-column align-items-center gap-1 py-1">
+            <img className=" h-13rem w-full  border-round" src={`content/uploads/${reto.urlFotoContentType}`} alt={reto.titulo} />
           </div>
 
           <div className="text-sm font-bold text-900 mt-2">{reto.titulo}</div>
 
           <div className="surface-overlay w-full h-6rem mb-2  overflow-hidden text-overflow-ellipsis">{reto.descripcion}</div>
 
-          <div className="flex flex-column sm:flex-row justify-content-between align-items-center gap-8 mb-2 absolute bottom-0 left-3">
+          <div className="flex  sm:flex-row justify-content-between align-items-center gap-8 mb-2 absolute bottom-0 left-3">
             <span className="flex align-items-center gap-2">
               <i className="pi pi-calendar"></i>
               {reto.fechaCreada ? <TextFormat type="date" value={reto.fechaCreada} format={APP_LOCAL_DATE_FORMAT} /> : null}
             </span>
+          </div>
+          <div className="flex justify-content-end absolute bottom-0 right-0 mb-2 mr-5">
             <Link to={`/entidad/noticias/noticias/${reto.id}/${props.match.params.id}/${props.match.params.index}`}>
               <div className="flex justify-content-start">
                 <FontAwesomeIcon icon="eye" /> <span className="d-none d-md-inline"></span>
@@ -180,11 +177,18 @@ const VistaGridNoticias = (props: RouteComponentProps<{ id: string; index: strin
       <div className="card mt-4 mb-4">
         <Toolbar className="mt-1" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
         {noticiasList && noticiasList.length > 0 ? (
-          <div className="flex flex-column align-items-center ">
-            <DataView value={noticias} layout={forma} itemTemplate={itemTemplate} emptyMessage="No hay Noticias" lazy />
-          </div>
+          <DataView
+            className=" mt-4 mb-4"
+            value={noticias}
+            layout={forma}
+            itemTemplate={itemTemplate}
+            emptyMessage="No hay Noticias"
+            lazy
+          />
+        ) : !loading ? (
+          <SpinnerCar />
         ) : (
-          !loading && <div className="alert alert-warning mt-4">No hay Noticias.</div>
+          <div className="alert alert-warning mt-4">No hay Noticias.</div>
         )}
       </div>
     </>

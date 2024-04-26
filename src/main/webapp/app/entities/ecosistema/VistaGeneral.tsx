@@ -82,9 +82,9 @@ function VistaGeneral(props) {
 
   return (
     <div className=" grid mt-2 mb-4">
-      <div className="flex sm:flex-row xl:col-6 lg:col-12 sm:col-12 md:col-12">
+      <div className="col-12  md:col-6">
         <div className="col-12 ">
-          <div className="card mt-4 border-round-3xl  sm:h-auto ">
+          <div className="card mt-3 border-round-3xl   ">
             <div className="flex justify-content-between">
               <div className="flex justify-content-start ">
                 <div ref={retosMio} className="text-900 text-2xl text-blue-600 font-medium ">
@@ -100,9 +100,9 @@ function VistaGeneral(props) {
         </div>
       </div>
 
-      <div className="flex sm:flex-row xl:col-6 lg:col-12 sm:col-12 md:col-12">
+      <div className="col-12  md:col-6">
         <div className="col-12 ">
-          <div className="card mt-4 border-round-3xl   ">
+          <div className="card mt-3 border-round-3xl   ">
             <div className="flex justify-content-between">
               <div className="flex justify-content-start ">
                 <div ref={noticiasMias} className="text-900 text-2xl text-blue-600 font-medium ">
@@ -124,9 +124,9 @@ function VistaGeneral(props) {
         </div>
       </div>
 
-      <div className="flex sm:flex-row xl:col-6 lg:col-12 sm:col-12 md:col-12">
+      <div className="col-12  md:col-6">
         <div className="col-12 ">
-          <div className="card mt-4 border-round-3xl  sm:h-auto">
+          <div className="card mt-3 border-round-3xl   ">
             <div className="flex justify-content-start ">
               <div className="text-900 text-2xl text-blue-600 font-medium ">Proyectos</div>
             </div>

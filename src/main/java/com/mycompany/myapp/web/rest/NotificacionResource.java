@@ -366,10 +366,8 @@ public class NotificacionResource {
                         fileServiceAPI.load(noti.getTipoNotificacion().getIcono())
                     );
                 } catch (Exception e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
+                    return new NotificacionDTO(noti, "noImagen", "NoImagen");
                 }
-                return null;
             })
             .collect(Collectors.toList());
 

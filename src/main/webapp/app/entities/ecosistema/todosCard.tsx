@@ -12,6 +12,7 @@ import { Toolbar } from 'primereact/toolbar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button } from 'primereact/button';
 import { Skeleton } from 'primereact/skeleton';
+import EcositemasCard1 from './ecositemasCard1';
 
 const TodosCard = props => {
   const dispatch = useAppDispatch();
@@ -41,6 +42,7 @@ const TodosCard = props => {
         <div className="my-2">
           <Button label="Atrás" icon="pi pi-arrow-left" className="p-button-secondary mr-2" onClick={atras} />
         </div>
+        <div className="text-2xl font-bold text-900 ml-8 text-center text-blue-600">Ecosistemas </div>
       </React.Fragment>
     );
   };
@@ -48,7 +50,7 @@ const TodosCard = props => {
   return (
     <>
       {loading ? (
-        <div className="flex flex-row  justify-content-center gap-3 grid mt-2">
+        <div className="flex flex-row  justify-content-center gap-3 grid mt-4">
           <div className="flex flex-column  h-28rem w-18rem max-w-30rem max-h-30rem  p-4 border-round-xl shadow-4 mb-2 relative">
             <div className="flex flex-column align-items-center gap-3 py-1 mb-2">
               <Skeleton width="100%" height="150px"></Skeleton>
@@ -125,16 +127,19 @@ const TodosCard = props => {
           <div className="col-12">
             <div className="flex flex-column md:flex-row align-items-center justify-content-center grid gap-3">
               {ecosistemaList.length > 0
-                ? ecosistemaList.map((eco, i) => (
-                    <div key={`card-${i}`} className="flex flex-column md:flex-row gap-3 ">
-                      <EcositemasCard
-                        ecosistema={eco}
-                        userEcosistema={usuarioEcosistemaList}
-                        lista={...usuarioEcosistemaList?.ecosistemas}
-                        history={props.history}
-                      />
-                    </div>
-                  ))
+                ? ecosistemaList.map(
+                    (eco, i) =>
+                      eco.activo && (
+                        <div key={`card-${i}`} className="flex flex-column sm:flex-row  justify-content-center card-container  mt-2 ">
+                          <EcositemasCard1
+                            ecosistema={eco}
+                            userEcosistema={usuarioEcosistemaList}
+                            lista={...usuarioEcosistemaList?.ecosistemas}
+                            history={props.history}
+                          />
+                        </div>
+                      )
+                  )
                 : ''}
             </div>
           </div>

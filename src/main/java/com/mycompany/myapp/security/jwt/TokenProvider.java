@@ -85,6 +85,12 @@ public class TokenProvider {
     public Authentication getAuthentication(String token) {
         Claims claims = jwtParser.parseClaimsJws(token).getBody();
 
+        // Validar si el token ha expirado
+        if (!validateToken(token)) {
+            // El token ha expirado
+            return null; // O manejar de acuerdo a tus necesidades
+        }
+
         Collection<? extends GrantedAuthority> authorities = Arrays
             .stream(claims.get(AUTHORITIES_KEY).toString().split(","))
             .filter(auth -> !auth.trim().isEmpty())

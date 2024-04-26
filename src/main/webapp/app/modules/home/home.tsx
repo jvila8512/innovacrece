@@ -45,56 +45,29 @@ export const Home = (props: RouteComponentProps<any>) => {
       <Row>
         <div
           id="hero"
-          className="flex flex-column pt-1 px-4 lg:px-8 overflow-hidden"
+          className="flex flex-column  px-4 lg:px-8 overflow-hidden"
           style={{
             background:
               'linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)), radial-gradient(77.36% 256.97% at 77.36% 57.52%, #EEEFAF 0%, #C3E3FA 100%)',
             clipPath: 'ellipse(150% 87% at 93% 13%)',
           }}
         >
-          <div className="relative">
-            <div className="sm: w-5 absolute top-5 right-0 mr-10 flex flex-row sm:flex-row align-items-end justify-content-end ">
-              <div className="p-inputgroup  mt-2">
-                <InputText value={texto} placeholder="Búsqueda-Innovaciones" onChange={e => setTexto(e.target.value)} />
-                {texto ? (
-                  <Link to={`/entidad/innovacion-racionalizacion/buscar/${texto}`} className="btn btn-primary" onClick={e => setTexto('')}>
-                    <i className="pi pi-search pt-2" style={{ fontSize: '1em' }}></i>
-                  </Link>
-                ) : (
-                  <Link to={`#`} className="btn btn-secondary" onClick={e => setTexto('')}>
-                    <i className="pi pi-search pt-2" style={{ fontSize: '1em' }}></i>
-                  </Link>
-                )}
-              </div>
-              <div className=" p-inputgroup ml-3 mt-2">
-                <InputText value={texto1} placeholder="Búsqueda-Proyectos" onChange={e => setTexto1(e.target.value)} />
-                {texto1 ? (
-                  <Link to={`/entidad/proyectos/proyectos_buscar/${texto1}`} className="btn btn-primary" onClick={e => setTexto1('')}>
-                    <i className="pi pi-search pt-2" style={{ fontSize: '1em' }}></i>
-                  </Link>
-                ) : (
-                  <Link to="#" className="btn btn-secondary">
-                    <i className="pi pi-search pt-2" style={{ fontSize: '1em' }}></i>
-                  </Link>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className="mx-4 md:mx-8 mt-0 md:mt-4">
-            <h1 className="text-6xl font-bold text-gray-900 line-height-2 mt-5">
+          <div className=" sm:mx-8 mt-0 md:mt-4">
+            <h1 className=" text-3xl sm:text-6xl font-bold text-gray-900 line-height-2 mt-5">
               <span className="font-light block">Ideas creativas y Oportunidades</span>
             </h1>
-            <p className="font-normal text-2xl line-height-3 md:mt-3 text-gray-700">Ayudar a monetizar tu talento es nuestro propósito. </p>
+            <p className=" text-lg   font-normal sm:text-2xl line-height-3 md:mt-3 text-gray-700">
+              Ayudar a monetizar tu talento es nuestro propósito.{' '}
+            </p>
 
-            <div className="mt-10 ">
+            <div className=" flex flex-row mt-10">
               <Button
                 type="button"
                 onClick={reto}
                 icon="pi pi-check"
                 iconPos="right"
                 label="Lanza Tú Reto"
-                className="p-button-rounded text-xl border-none mt-3 ml-3 mb-4 bg-blue-500 font-normal line-height-3 px-3 text-white"
+                className=" text-xs p-button-rounded sm:text-xl border-none mt-3 ml-3 mb-3 bg-blue-500 font-normal line-height-3 px-3 text-white"
               ></Button>
               <Button
                 type="button"
@@ -102,7 +75,7 @@ export const Home = (props: RouteComponentProps<any>) => {
                 icon="pi pi-check"
                 iconPos="right"
                 label="Aporta Tú Idea"
-                className="p-button-rounded text-xl border-none mt-3 ml-3 mb-4 bg-blue-500 font-normal line-height-3 px-3 text-white"
+                className="text-xs p-button-rounded sm:text-xl border-none mt-3 ml-3 mb-3 bg-blue-500 font-normal line-height-3 px-3 text-white"
               ></Button>
             </div>
             {account?.login ? (

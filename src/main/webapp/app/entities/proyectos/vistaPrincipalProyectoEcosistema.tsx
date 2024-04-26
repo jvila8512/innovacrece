@@ -67,7 +67,7 @@ const VistaPrincipalProyectoEcosistema = props => {
       <div className="col-12 border-round-xl  mb-2">
         <div className="flex flex-column xl:flex-row xl:align-items-center p-2 gap-4">
           <img
-            className="w-10rem h-8rem sm:w-10rem xl:w-10rem shadow-2 block xl:block mx-auto border-round"
+            className="w-full h-14rem  shadow-2  sm:w-full sm:14rem md:w-10rem md:h-8rem"
             src={`content/uploads/${proyecto.logoUrlContentType}`}
           />
 

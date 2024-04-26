@@ -103,12 +103,10 @@ const NotificacionUser = props => {
           <div className="flex flex-column sm:flex-row  align-items-center xl:align-items-start flex-1 gap-2">
             <div className="flex flex-column  xl:col-12 align-content-end align-items-center sm:align-items-start gap-3">
               <div
-                className="
-                                                                      
-                                        h-3rem                    
-                                         
-                                        overflow-hidden 
-                                        text-overflow-ellipsis"
+                className="                                             
+                h-3rem                                
+                overflow-hidden 
+                text-overflow-ellipsis"
               >
                 {noti.descripcion}
               </div>
@@ -148,21 +146,26 @@ const NotificacionUser = props => {
   };
 
   return (
-    <>
+    <div className="grid">
       {notiList && notiList.length > 0 ? (
-        <DataScroller value={notiList} itemTemplate={itemTemplate} rows={20} inline scrollHeight="500px" className="p-0 bg-cyan-700" />
+        <DataScroller
+          value={notiList}
+          itemTemplate={itemTemplate}
+          rows={20}
+          inline
+          scrollHeight="500px"
+          className="p-0 bg-cyan-700 w-full"
+        />
       ) : loading ? (
         <SpinnerCar />
       ) : (
-        <div className="flex flex-row text-xl xl:col-12 alert alert-warning mt-4" style={{ width: '600px' }}>
-          No hay notificaciones.
-        </div>
+        <div className="flex flex-row text-xl xl:col-12 alert alert-warning mt-4 sm:w-30rem w-full">No hay notificaciones. </div>
       )}
 
       <Dialog visible={notiDialog} style={{ width: '500px' }} header="Notificación" modal onHide={hideNotiDialog}>
         <Row className="justify-content-center">
           <div className="col-12">
-            <div className="flex flex-column xl:flex-row   gap-3">
+            <div className="flex flex-column xl:flex-row gap-3">
               <div className="flex flex-column ">
                 <Avatar image={`content/uploads/${notiSelect?.user.imageUrl}`} shape="circle" className="p-overlay-badge " size="xlarge">
                   <div className="flex justify-content-end absolute bottom-0 right-0 -mb-2 -mr-1 ">
@@ -206,7 +209,7 @@ const NotificacionUser = props => {
           </div>
         </Row>
       </Dialog>
-    </>
+    </div>
   );
 };
 

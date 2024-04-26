@@ -333,8 +333,8 @@ public class UserService {
         List<AdminUserDTO> listanueva = lista
             .stream()
             .map(userEntity -> {
-                try {
-                    return new AdminUserDTO(userEntity, (String) fileServiceAPI.load(userEntity.getImageUrl()));
+                try { //(String) fileServiceAPI.load(userEntity.getImageUrl())
+                    return new AdminUserDTO(userEntity, "imagamenNoesta");
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
@@ -379,6 +379,19 @@ public class UserService {
     @Transactional(readOnly = true)
     public List<String> getAuthorities() {
         return authorityRepository.findAll().stream().map(Authority::getName).collect(Collectors.toList());
+    }
+
+    /**
+     * Gets a list of all the authorities.
+     * @return a list of all the authorities.
+     */
+    @Transactional(readOnly = true)
+    public List<Authority> getAuthoritiesJson() {
+        List<String> roles = authorityRepository.findAll().stream().map(authority -> authority.getName()).collect(Collectors.toList());
+
+        List<Authority> authorities = roles.stream().map(role -> new Authority(role)).collect(Collectors.toList());
+
+        return authorities;
     }
 
     private void clearUserCaches(User user) {

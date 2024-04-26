@@ -124,6 +124,7 @@ const ProyectosEcosistemas = (props: RouteComponentProps<{ id: string; index: st
       borrar(selectedProyecto.logoUrlContentType);
     }
   }, [updateSuccessFile]);
+
   const handleFileUpload = event => {
     const fileupload = event.files[0];
     const formData = new FormData();

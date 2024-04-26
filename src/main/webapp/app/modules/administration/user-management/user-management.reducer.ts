@@ -37,6 +37,14 @@ export const getUsersTodos = createAsyncThunk('userManagement/fetch_users_as_adm
 export const getRoles = createAsyncThunk('userManagement/fetch_roles', async () => {
   return axios.get<any[]>(`api/authorities`);
 });
+export const getRolesJson = createAsyncThunk('userManagement/fetch_rolesJSON', async () => {
+  return axios.get<any[]>(`api/authoritiesJson`);
+});
+
+export const getRolesJsonok = async () => {
+  const requestUrl = `api/authoritiesJson`;
+  return axios.get(requestUrl);
+};
 
 export const contarRetosbyEcosistemas = async id => {
   const requestUrl = `${apiUrl}/contarEcosistemas/${id}`;
@@ -61,7 +69,7 @@ export const createUser = createAsyncThunk(
   'userManagement/create_user',
   async (user: IUser, thunkAPI) => {
     const result = await axios.post<IUser>(adminUrl, user);
-    thunkAPI.dispatch(getUsersAsAdmin({}));
+    thunkAPI.dispatch(getUsersTodos());
     return result;
   },
   { serializeError: serializeAxiosError }
@@ -71,7 +79,7 @@ export const updateUser = createAsyncThunk(
   'userManagement/update_user',
   async (user: IUser, thunkAPI) => {
     const result = await axios.put<IUser>(adminUrl, user);
-    thunkAPI.dispatch(getUsersAsAdmin({}));
+    thunkAPI.dispatch(getUsersTodos());
     return result;
   },
   { serializeError: serializeAxiosError }
@@ -82,7 +90,7 @@ export const deleteUser = createAsyncThunk(
   async (id: string, thunkAPI) => {
     const requestUrl = `${adminUrl}/${id}`;
     const result = await axios.delete<IUser>(requestUrl);
-    thunkAPI.dispatch(getUsersAsAdmin({}));
+    thunkAPI.dispatch(getUsersTodos());
     return result;
   },
   { serializeError: serializeAxiosError }
@@ -133,12 +141,15 @@ export const UserManagementSlice = createSlice({
         state.updateSuccess = false;
         state.updating = true;
       })
-      .addMatcher(isRejected(getUsers, getUsersAsAdmin, getUser, getRoles, createUser, updateUser, deleteUser), (state, action) => {
-        state.loading = false;
-        state.updating = false;
-        state.updateSuccess = false;
-        state.errorMessage = action.error.message;
-      });
+      .addMatcher(
+        isRejected(getUsers, getUsersAsAdmin, getUser, getRoles, getRolesJson, createUser, updateUser, deleteUser),
+        (state, action) => {
+          state.loading = false;
+          state.updating = false;
+          state.updateSuccess = false;
+          state.errorMessage = action.error.message;
+        }
+      );
   },
 });
 

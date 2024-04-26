@@ -4,8 +4,8 @@ import React from 'react';
 const SkaletonNoticias = () => {
   return (
     <div>
-      <div className="surface-section px-4 py-8 md:px-6 lg:px-8 text-center">
-        <div className="mb-3 font-bold text-900 text-5xl  ">
+      <div className="surface-section px-1 py-4 md:px-6 text-center">
+        <div className="mb-3 font-bold text-900 text-2xl sm:text-5xl  ">
           <span className="text-blue-600">Actualidad</span>
         </div>
         <div className="flex align-items-center justify-content-center grid">
@@ -17,11 +17,11 @@ const SkaletonNoticias = () => {
             <div className="flex justify-content-center">
               <Skeleton width="12rem" height="2rem" className=" flex mt-2 mb-2"></Skeleton>
             </div>
-            <div className="flex  ">
-              <div className="flex  flex-column justify-content-center ">
-                <Skeleton width="400px" className=" mb-2"></Skeleton>
-                <Skeleton width="400px" className=" mb-2"></Skeleton>
-                <Skeleton width="400px" className=" mb-2"></Skeleton>
+            <div className="flex  justify-content-center">
+              <div className="flex  flex-column justify-content-center">
+                <Skeleton width="300px" className=" mb-2"></Skeleton>
+                <Skeleton width="300px" className=" mb-2"></Skeleton>
+                <Skeleton width="300px" className=" mb-2"></Skeleton>
               </div>
             </div>
 
@@ -42,11 +42,10 @@ const SkaletonNoticias = () => {
             <div className="flex justify-content-center">
               <Skeleton width="12rem" height="2rem" className=" flex mt-2 mb-2"></Skeleton>
             </div>
-            <div className="flex  ">
-              <div className="flex  flex-column justify-content-center ">
-                <Skeleton width="400px" className=" mb-2"></Skeleton>
-                <Skeleton width="400px" className=" mb-2"></Skeleton>
-                <Skeleton width="400px" className=" mb-2"></Skeleton>
+            <div className="flex  justify-content-center">
+              <div className="flex  flex-column justify-content-center">
+                <Skeleton width="300px" className=" mb-2"></Skeleton>
+                <Skeleton width="300px" className=" mb-2"></Skeleton>
               </div>
             </div>
 
@@ -67,11 +66,10 @@ const SkaletonNoticias = () => {
             <div className="flex justify-content-center">
               <Skeleton width="12rem" height="2rem" className=" flex mt-2 mb-2"></Skeleton>
             </div>
-            <div className="flex  ">
-              <div className="flex  flex-column justify-content-center ">
-                <Skeleton width="400px" className=" mb-2"></Skeleton>
-                <Skeleton width="400px" className=" mb-2"></Skeleton>
-                <Skeleton width="400px" className=" mb-2"></Skeleton>
+            <div className="flex  justify-content-center">
+              <div className="flex  flex-column justify-content-center">
+                <Skeleton width="300px" className=" mb-2"></Skeleton>
+                <Skeleton width="300px" className=" mb-2"></Skeleton>
               </div>
             </div>
 

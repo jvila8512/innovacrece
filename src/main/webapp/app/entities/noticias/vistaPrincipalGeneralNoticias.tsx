@@ -74,7 +74,7 @@ const vistaPrincipalGeneralNoticias = props => {
       <div className="col-12 border-round-xl  mb-2">
         <div className="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
           <img
-            className="w-10rem h-8rem sm:w-10rem xl:w-10rem shadow-2 block xl:block mx-auto border-round"
+            className="w-full h-14rem  shadow-2  sm:w-full sm:14rem md:w-10rem md:h-8rem"
             src={`content/uploads/${reto.urlFotoContentType}`}
             alt={reto.titulo}
           />
@@ -126,12 +126,12 @@ const vistaPrincipalGeneralNoticias = props => {
 
   const gridItem = reto => {
     return (
-      <div className="col-12  sm:col-6 lg:col-12 xl:col-4 p-2 ">
+      <div className="col-12  border-round-xl  mb-2 ">
         <div className="p-4 border-1 surface-border surface-card border-round">
           <div className="flex flex-column align-items-center gap-3 py-5">
             <Link to={`/noticias/ver-noticias`} id="jh-tre" data-cy="ecosistemas">
               <img
-                className="w-9 sm:w-16rem xl:w-10rem shadow-2 block xl:block mx-auto border-round"
+                className="w-full h-14rem  shadow-2  sm:w-full sm:14rem md:w-10rem md:h-8rem"
                 src={`data:${reto.urlFotoContentType};base64,${reto.urlFoto}`}
                 alt={reto.titulo}
               />

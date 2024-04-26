@@ -7,12 +7,15 @@ import LoginModal from './login-modal';
 
 import { hasAnyAuthority } from 'app/shared/auth/private-route';
 import { AUTHORITIES } from 'app/config/constants';
+import Cargando from 'app/entities/loader/cargando';
 
 export const Login = (props: RouteComponentProps<any>) => {
   const dispatch = useAppDispatch();
   const isAuthenticated = useAppSelector(state => state.authentication.isAuthenticated);
   const loginError = useAppSelector(state => state.authentication.loginError);
   const showModalLogin = useAppSelector(state => state.authentication.showModalLogin);
+  const loanding = useAppSelector(state => state.authentication.loading);
+
   const [showModal, setShowModal] = useState(showModalLogin);
   const isAdmin = useAppSelector(state => hasAnyAuthority(state.authentication.account.authorities, [AUTHORITIES.ADMIN]));
   const isAdminEcosistema = useAppSelector(state =>
@@ -40,7 +43,7 @@ export const Login = (props: RouteComponentProps<any>) => {
   }
   return (
     <>
-      <LoginModal showModal={showModal} handleLogin={handleLogin} handleClose={handleClose} loginError={loginError} />;
+      <LoginModal showModal={showModal} handleLogin={handleLogin} handleClose={handleClose} loginError={loginError} cargando={loanding} />;
     </>
   );
 };

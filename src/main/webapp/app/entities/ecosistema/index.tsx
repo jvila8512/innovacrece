@@ -12,6 +12,8 @@ import EcosistemaPeticionesDialog from './ecosistema-peticiones-dialog';
 import Modal1 from './modal';
 import VistaGeneralEcositema from './VistaGeneralEcositema';
 import EcosistemaCrud from './ecosistema-crud';
+import PrivateRoute from 'app/shared/auth/private-route';
+import { AUTHORITIES } from 'app/config/constants';
 
 const Routes = ({ match }) => (
   <>
@@ -20,7 +22,7 @@ const Routes = ({ match }) => (
       <ErrorBoundaryRoute exact path={`${match.url}/vistaprincipal/:id`} component={VistaGeneralEcositema} />
       <ErrorBoundaryRoute path={`${match.url}/card`} component={TodosCard} />
       <ErrorBoundaryRoute exact path={`${match.url}/:id/edit`} component={EcosistemaUpdate} />
-      <ErrorBoundaryRoute path={`${match.url}/crud`} component={EcosistemaCrud} />
+      <PrivateRoute path={`${match.url}/crud`} component={EcosistemaCrud} hasAnyAuthorities={[AUTHORITIES.ADMIN]} />
       <ErrorBoundaryRoute exact path={`${match.url}/:id`} component={EcosistemaDetail} />
       <ErrorBoundaryRoute path={match.url} component={Ecosistema} />
     </Switch>

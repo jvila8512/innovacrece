@@ -158,7 +158,7 @@ const ProyectosAdmin = (props: RouteComponentProps<{ id: string }>) => {
   };
   const header = (
     <div className="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
-      <h3 className="m-0">Proyectos</h3>
+      <h3 className="text-900 text-2xl text-blue-600 font-medium">Proyectos</h3>
 
       <span className="block mt-2 md:mt-0 p-input-icon-left">
         <i className="pi pi-search" />
@@ -168,7 +168,11 @@ const ProyectosAdmin = (props: RouteComponentProps<{ id: string }>) => {
   );
 
   const retoBodyTemplate = rowData => {
-    return <>{rowData.nombre}</>;
+    return (
+      <>
+        <span className="pl-5"> {rowData.nombre}</span>
+      </>
+    );
   };
   const imageBodyTemplate = rowData => {
     return (
@@ -186,13 +190,13 @@ const ProyectosAdmin = (props: RouteComponentProps<{ id: string }>) => {
   };
   const actionBodyTemplate = rowData => {
     return (
-      <>
+      <div className="align-items-center justify-content-center">
         <Button icon="pi pi-eye" className="p-button-rounded p-button-info ml-2 mb-1" onClick={() => verReto(rowData)} />
 
         <Button icon="pi pi-trash" className="p-button-rounded p-button-danger ml-2 mb-1" onClick={() => verIdeas(rowData)} />
 
         <Button icon="pi pi-pencil" className="p-button-rounded p-button-warning ml-2 mb-1" onClick={() => actualizar(rowData)} />
-      </>
+      </div>
     );
   };
 
@@ -316,7 +320,14 @@ const ProyectosAdmin = (props: RouteComponentProps<{ id: string }>) => {
             <Column field="id" header="Id" hidden headerStyle={{ minWidth: '15rem' }}></Column>
             <Column field="user.id" header="User" hidden headerStyle={{ minWidth: '15rem' }}></Column>
             <Column field="ecosistema.nombre" sortable header="Ecosistema" headerStyle={{ minWidth: '15rem' }}></Column>
-            <Column field="nombre" header="Nombre" sortable body={retoBodyTemplate} headerStyle={{ minWidth: '15rem' }}></Column>
+            <Column
+              field="nombre"
+              header="Nombre"
+              style={{ alignContent: 'right' }}
+              sortable
+              body={retoBodyTemplate}
+              headerStyle={{ minWidth: '15rem' }}
+            ></Column>
             <Column
               field="descricion"
               header="Descripción"
