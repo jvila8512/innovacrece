@@ -17,6 +17,7 @@ import { AUTHORITIES } from 'app/config/constants';
 import AppRoutes from 'app/routes';
 import { logout } from 'app/shared/reducers/authentication';
 import { useSelector } from 'react-redux';
+import { getEntitiesActivas } from 'app/entities/comunidad/comunidad.reducer';
 
 const baseHref = document.querySelector('base').getAttribute('href').replace(/\/$/, '');
 const TIMEOUT = 900000; // 15 minutos en milisegundos 600000
@@ -42,9 +43,12 @@ export const App = () => {
   const isInProduction = useAppSelector(state => state.applicationProfile.inProduction);
   const isOpenAPIEnabled = useAppSelector(state => state.applicationProfile.isOpenAPIEnabled);
   const account = useAppSelector(state => state.authentication.account);
+
+  const comunidadList = useAppSelector(state => state.comunidad.entities);
   useEffect(() => {
     dispatch(getSession());
     dispatch(getProfile());
+    dispatch(getEntitiesActivas());
   }, []);
 
   useEffect(() => {
@@ -89,6 +93,7 @@ export const App = () => {
             ribbonEnv={ribbonEnv}
             isInProduction={isInProduction}
             isOpenAPIEnabled={isOpenAPIEnabled}
+            comunidades={comunidadList}
           />
         </ErrorBoundary>
         <div className="container-fluid view-container" id="app-view-container">

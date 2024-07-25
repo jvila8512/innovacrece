@@ -104,23 +104,23 @@ function VistaGeneralEcositema1(props) {
   return (
     <div className=" grid grid-nogutter surface-0 mt-2">
       <div className="col-12  md:col-6 p-0">
-        <div className="flex  flex-column sm:flex-row sm:justify-content-center  align-items-center text-700">
-          <div className=" flex  align-items-center mt-1 ml-3 ">
-            <div className="surface-0 shadow-3 p-3 border-1 border-50 border-round">
+        <div className="flex  flex-row sm:flex-row  justify-content-start sm:justify-content-center  align-items-center text-700">
+          <div className=" flex   align-items-center mt-1 ml-1 ">
+            <div className="surface-0 p-1 sm:p-3 border-1 border-50 border-round">
               <div className="flex justify-content-between mb-3">
                 <div>
-                  <span className=" text-500  font-medium text-xl mb-3"> Retos</span>
+                  <span className=" text-sm sm:text-xl text-500  font-medium  mb-3"> Retos</span>
 
                   {reto == null ? (
                     <div className="text-600 font-medium text-2xl text-center">
                       <Spinner></Spinner>
                     </div>
                   ) : (
-                    <div className=" text-600 font-medium text-2xl text-center">{reto}</div>
+                    <div className=" text-sm sm:text-xl text-600 font-medium  text-center">{reto}</div>
                   )}
                 </div>
                 <div
-                  className="flex align-items-center justify-content-center bg-orange-100  border-round ml-4"
+                  className="flex align-items-center justify-content-center bg-orange-100  border-round ml-1"
                   style={{ width: '2.5rem', height: '2.5rem' }}
                 >
                   <i className="pi pi-inbox text-orange-500 text-xl"></i>
@@ -129,22 +129,22 @@ function VistaGeneralEcositema1(props) {
             </div>
           </div>
 
-          <div className=" flex  align-items-center mt-1 ml-3 ">
-            <div className="surface-0 shadow-3 p-3 border-1 border-50 border-round">
+          <div className=" flex   align-items-center mt-1 ml-1 ">
+            <div className="surface-0  p-1 sm:p-3 border-1 border-50 border-round">
               <div className="flex justify-content-between mb-3">
                 <div>
-                  <span className=" text-500  font-medium text-xl mb-3"> Noticias</span>
+                  <span className=" text-500  font-medium text-sm sm:text-xl mb-3"> Noticias</span>
 
                   {noticia == null ? (
-                    <div className="text-600 font-medium text-2xl text-center">
+                    <div className="text-600 font-medium text-sm sm:text-xl text-center">
                       <Spinner></Spinner>
                     </div>
                   ) : (
-                    <div className="text-600 font-medium text-2xl text-center">{noticia}</div>
+                    <div className="text-600 font-medium text-sm sm:text-xl text-center">{noticia}</div>
                   )}
                 </div>
                 <div
-                  className="flex align-items-center justify-content-center   bg-cyan-100 border-round ml-4"
+                  className="flex align-items-center justify-content-center   bg-cyan-100 border-round ml-1"
                   style={{ width: '2.5rem', height: '2.5rem' }}
                 >
                   <FontAwesomeIcon icon={faNewspaper} size="lg" />
@@ -153,21 +153,21 @@ function VistaGeneralEcositema1(props) {
             </div>
           </div>
 
-          <div className=" flex  align-items-center mt-1 ml-3 ">
-            <div className="surface-0 shadow-3 p-3 border-1 border-50 border-round">
+          <div className=" flex   align-items-center mt-1 ml-1 ">
+            <div className="surface-0 p-1 sm:p-3 border-1 border-50 border-round">
               <div className="flex justify-content-between mb-3">
                 <div>
-                  <span className=" text-500  font-medium text-xl mb-3"> Proyectos</span>
+                  <span className=" text-500  font-medium text-sm sm:text-xl mb-3"> Proyectos</span>
                   {proyecto == null ? (
                     <div className="text-600 font-medium text-2xl text-center">
                       <Spinner></Spinner>
                     </div>
                   ) : (
-                    <div className="text-600 font-medium text-2xl text-center">{proyecto}</div>
+                    <div className="text-600 font-medium text-sm sm:text-xl text-center">{proyecto}</div>
                   )}
                 </div>
                 <div
-                  className="flex align-items-center justify-content-center bg-purple-100 border-round ml-4"
+                  className="flex align-items-center justify-content-center bg-purple-100 border-round ml-1"
                   style={{ width: '2.5rem', height: '2.5rem' }}
                 >
                   <i className="pi pi-map-marker text-blue-500 text-xl"></i>

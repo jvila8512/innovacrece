@@ -19,14 +19,17 @@
       },
       "id": "ID",
       "tematica": "Temática",
-      "fecha": "Fecha",
+      "titulo": "Título",
+      "fecha": "Fecha Inscripción",
+      "fechaPractica": "Fecha Puesta en Práctica",
       "vp": "Vp",
       "autores": "Autores",
       "numeroIdentidad": "Número Identidad",
+      "sindicato": "Sindicato",
       "observacion": "Observación",
-      "aprobada": "Aprobada",
-      "publico": "Público",
-      "tipoIdea": "Tipo Idea"
+      "aprobada": "Escalable",
+      "publico": "Pública",
+      "tipoIdea": "Tipo Innovación"
     }
   }
 }

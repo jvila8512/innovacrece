@@ -1,4 +1,3 @@
-import { Button } from 'primereact/button';
 import { Avatar } from 'primereact/avatar';
 import React, { useEffect, useRef, useState } from 'react';
 import { Alert } from 'reactstrap';
@@ -30,6 +29,7 @@ import MenuUsuarioNotificaciones from './menu-notificaciones ';
 import { reset as resetNoti } from 'app/entities/notificacion/notificacion.reducer';
 import { getEntitiesByEcosistematodasFiltrarFechasSinRespuesta, reset as resetRetos } from 'app/entities/reto/reto.reducer';
 import VistaGeneral from 'app/entities/ecosistema/VistaGeneral';
+import { Button } from 'primereact/button';
 
 const Usuario = (props: RouteComponentProps<{ index: any }>) => {
   const dispatch = useAppDispatch();
@@ -47,6 +47,9 @@ const Usuario = (props: RouteComponentProps<{ index: any }>) => {
   const [activeIndex, setActiveIndex] = useState(props.match.params.index ? parseInt(props.match.params.index, 10) + 1 : 1);
 
   const [index, setIndex] = useState(parseInt(props.match.params.index, 10));
+
+  const comunidadList = useAppSelector(state => state.comunidad.entities);
+
   const [miLista, setMiLista] = useState([]);
 
   const toast1 = useRef(null);
@@ -98,18 +101,59 @@ const Usuario = (props: RouteComponentProps<{ index: any }>) => {
       </div>
     );
   };
+  const comunidad = () => {
+    const comuni = comunidadList[0];
+
+    window.open(`${comuni.link}`, '_blank');
+  };
+
+  const items = [
+    {
+      label: 'Prioridad',
+      icon: 'pi pi-search',
+      // eslint-disable-next-line object-shorthand
+      command: () => {
+        props.history.push(`/buscar/Prioridad/${texto}`);
+      },
+    },
+    {
+      label: 'ODE',
+      icon: 'pi pi-search',
+    },
+    {
+      label: 'Sector',
+      icon: 'pi pi-search',
+    },
+  ];
 
   return (
     <div className="card p-2 mt-2 mb-2">
+      <Toast ref={toast1}></Toast>
       <Toolbar className="mt-1 flex flex-row bg-gray-200" left={leftToolbarTemplate} right={rightToolbarTemplate}></Toolbar>
 
       <div className="flex flex-column sm:flex-row mt-2 mb-4 ">
         <div className="flex justify-content-start">
           <h5 className="text-900 text-2xl text-blue-600 font-medium mt-2 mb-2 ml-4">Ecosistemas</h5>
+
+          <Button
+            onClick={comunidad}
+            icon="pi  pi-globe"
+            className="p-button-rounded p-button-info p-button-text scalein animation-duration-2000 animation-iteration-infinite"
+            aria-label="User"
+            tooltip="Comunidad de Innovación"
+          ></Button>
         </div>
         <div className="flex justify-content-end ml-auto">
           <div className=" p-inputgroup  ">
-            <InputText value={texto} placeholder="Innovaciones" onChange={e => setTexto(e.target.value)} />
+            <InputText value={texto} placeholder="Sector, ODS, Prioridad" onChange={e => setTexto(e.target.value)} />
+            {texto ? (
+              <SplitButton label="" icon="pi pi-search" model={items}></SplitButton>
+            ) : (
+              <SplitButton label="" disabled icon="pi pi-search" model={items}></SplitButton>
+            )}
+          </div>
+          <div className=" p-inputgroup  ">
+            <InputText value={texto} placeholder="Innovaciones11" onChange={e => setTexto(e.target.value)} />
             {texto ? (
               <Link to={`/entidad/innovacion-racionalizacion/buscar/${texto}`} className="btn btn-primary" onClick={e => setTexto('')}>
                 <i className="pi pi-search pt-2" style={{ fontSize: '1em' }}></i>

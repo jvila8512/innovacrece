@@ -34,6 +34,8 @@ import ChangeMacker from './change-macker';
 import ContactoChangeMacker from './contacto-change-macker';
 import Anirista from './anirista';
 import EcosistemaComponente from './ecosistema-componente';
+import Comunidades from './comunidad';
+
 /* jhipster-needle-add-route-import - JHipster will add routes here */
 
 export default ({ match }) => {
@@ -60,6 +62,7 @@ export default ({ match }) => {
         <ErrorBoundaryRoute path={`${match.url}/anirista`} component={Anirista} />
         <ErrorBoundaryRoute path={`${match.url}/contacto-change-macker`} component={ContactoChangeMacker} />
         <ErrorBoundaryRoute path={`${match.url}/ecosistema-componente`} component={EcosistemaComponente} />
+        <ErrorBoundaryRoute path={`${match.url}/comunidad`} component={Comunidades} />
         {/* jhipster-needle-add-route-path - JHipster will add routes here */}
       </Switch>
     </div>

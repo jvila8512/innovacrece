@@ -7,7 +7,9 @@ const EntitiesMenu = ({ on }) => {
   return (
     <>
       {/* prettier-ignore */}
-
+      <MenuItem icon="asterisk" to="/entidad/comunidad/comunidades" on={on}>
+        Comunidades
+      </MenuItem>
       <MenuItem icon="asterisk" to="/entidad/idea" on={on}>
         <Translate contentKey="global.menu.entities.idea" />
       </MenuItem>
@@ -32,7 +34,7 @@ const EntitiesMenu = ({ on }) => {
         <Translate contentKey="global.menu.entities.contacto" />
       </MenuItem>
 
-      <MenuItem icon="asterisk" to="/entidad/innovacion-racionalizacion" on={on}>
+      <MenuItem icon="asterisk" to="/entidad/innovacion-racionalizacion/crud" on={on}>
         <Translate contentKey="global.menu.entities.innovacionRacionalizacion" />
       </MenuItem>
 

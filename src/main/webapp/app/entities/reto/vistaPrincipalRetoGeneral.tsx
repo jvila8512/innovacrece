@@ -227,8 +227,8 @@ const vistaPrincipalRetoGeneral = props => {
             <SpinnerCar />
           ) : (
             <div className="col-12 border-round-xl  mb-2">
-              <div className="flex flex-column lg:flex-row xl:flex-row xl:align-items-start p-4 gap-4">
-                <div className="flex flex-column ">
+              <div className="flex flex-column lg:flex-row xl:flex-row xl:align-items-start ">
+                <div className="flex flex-column w-full">
                   <div className="alert alert-warning mt-4">No hay Retos.</div>
                 </div>
               </div>

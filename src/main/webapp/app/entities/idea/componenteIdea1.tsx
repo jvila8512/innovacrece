@@ -380,7 +380,7 @@ const ComponenteIdea1 = props => {
 
   return (
     <div key={idea.id} className="p-2 ">
-      <div className=" h-30rem w-24rem max-h-30rem  p-4 border-round-xl shadow-4 mb-2 relative">
+      <div className=" w-18rem h-30rem sm:w-24rem max-h-30rem  p-4 border-round-xl shadow-4 mb-2 relative">
         <div className="flex flex-column align-items-center gap-3 py-5">
           {renderDevRibbon()}
 
@@ -394,7 +394,7 @@ const ComponenteIdea1 = props => {
         {idea.user.id === props.usuarioo.id && <div className="text-1xl  text-600 ">Autor: {idea.autor}</div>}
         <div className="text-1xl  text-600 ">Tipo Idea: {idea.tipoIdea?.tipoIdea}</div>
 
-        <div className="flex flex-column align-content-end align-items-center sm:align-items-start gap-3">
+        <div className="flex absolute bottom-0 left-0 mb-8 ml-5">
           <div className="flex align-items-center gap-3">
             <span className="flex align-items-center text-sm gap-2 mt-2">
               <i className="pi pi-calendar"></i>
@@ -402,7 +402,7 @@ const ComponenteIdea1 = props => {
             </span>
           </div>
         </div>
-        <div className="flex absolute bottom-0 left-0 mb-8 ml-5">
+        <div className="flex absolute bottom-0 left-0 mb-6 ml-5">
           <Tag className="manito" onClick={hacerPublicaIdea} value={getActivo(idea)} severity={getSeverity(idea)}></Tag>
         </div>
         {idea.user?.id === props.usuarioo?.id && !props.reto.publico && (

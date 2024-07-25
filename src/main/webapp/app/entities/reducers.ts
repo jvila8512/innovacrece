@@ -33,6 +33,7 @@ import changeMacker from 'app/entities/change-macker/change-macker.reducer';
 import contactoChangeMacker from 'app/entities/contacto-change-macker/contacto-change-macker.reducer';
 import anirista from 'app/entities/anirista/anirista.reducer';
 import ecosistemaComponente from 'app/entities/ecosistema-componente/ecosistema-componente.reducer';
+import comunidad from 'app/entities/comunidad/comunidad.reducer';
 /* jhipster-needle-add-reducer-import - JHipster will add reducer here */
 
 const entitiesReducers = {
@@ -70,6 +71,7 @@ const entitiesReducers = {
   ecosistemaComponente,
   tipoNotificacion,
   notificacion,
+  comunidad,
 
   /* jhipster-needle-add-reducer-combine - JHipster will add reducer here */
 };

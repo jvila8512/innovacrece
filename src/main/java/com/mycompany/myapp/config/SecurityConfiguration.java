@@ -94,6 +94,7 @@ public class SecurityConfiguration {
             .antMatchers("/api/contactos").permitAll()
             .antMatchers("/api/tipo-contactos").permitAll()
             .antMatchers("/api/activate").permitAll()
+            .antMatchers("/api/comunidadActiva").permitAll()
             .antMatchers("/api/ecosistemas/activos").permitAll()
             .antMatchers("/api/noticias/{id}").permitAll()
             .antMatchers("/api/noticias/publicar").permitAll()

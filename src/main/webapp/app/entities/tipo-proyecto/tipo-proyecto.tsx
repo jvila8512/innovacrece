@@ -40,6 +40,7 @@ export const TipoProyecto = (props: RouteComponentProps<{ url: string }>) => {
             className="btn btn-primary jh-create-entity"
             id="jh-create-entity"
             data-cy="entityCreateButton"
+            href=""
           >
             <FontAwesomeIcon icon="plus" />
             &nbsp;

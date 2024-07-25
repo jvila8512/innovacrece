@@ -36,27 +36,55 @@ export const Home = (props: RouteComponentProps<any>) => {
   };
 
   const reto = () => {
-    if (isAuthenticated) {
-      props.history.push('/usuario-panel');
-    }
+    props.history.push('/usuario-panel');
+  };
+  const login = () => {
+    props.history.push('/login');
+  };
+  const registrar = () => {
+    props.history.push('/account/register');
   };
   return (
     <>
       <Row>
         <div
           id="hero"
-          className="flex flex-column  px-4 lg:px-8 overflow-hidden"
+          className="flex flex-column  px-4 lg:px-8 overflow-hidden relative"
           style={{
             background:
               'linear-gradient(0deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)), radial-gradient(77.36% 256.97% at 77.36% 57.52%, #EEEFAF 0%, #C3E3FA 100%)',
             clipPath: 'ellipse(150% 87% at 93% 13%)',
           }}
         >
-          <div className=" sm:mx-8 mt-0 md:mt-4">
-            <h1 className=" text-3xl sm:text-6xl font-bold text-gray-900 line-height-2 mt-5">
+          <div className=" flex  justify-content-end sm:flex-row mt-2">
+            <div className=" flex  mt-2">
+              {account?.login ? (
+                <div></div>
+              ) : (
+                <Button
+                  icon="pi pi-users"
+                  onClick={registrar}
+                  className="p-button-rounded p-button-help p-button-outlined mx-2"
+                  aria-label="USer"
+                />
+              )}
+              {account?.login ? (
+                <div></div>
+              ) : (
+                <Button
+                  icon="pi pi-sign-in"
+                  onClick={login}
+                  className="p-button-rounded p-button-help p-button-outlined mx-2"
+                  aria-label="Login"
+                />
+              )}
+            </div>
+          </div>
+          <div className=" sm:mx-8 mt-0 md:mt-2">
+            <h1 className=" text-2xl sm:text-6xl font-bold text-gray-900 line-height-2 mt-2">
               <span className="font-light block">Ideas creativas y Oportunidades</span>
             </h1>
-            <p className=" text-lg   font-normal sm:text-2xl line-height-3 md:mt-3 text-gray-700">
+            <p className=" text-mg   font-normal sm:text-2xl line-height-3 md:mt-3 text-gray-700">
               Ayudar a monetizar tu talento es nuestro propósito.{' '}
             </p>
 
@@ -78,14 +106,8 @@ export const Home = (props: RouteComponentProps<any>) => {
                 className="text-xs p-button-rounded sm:text-xl border-none mt-3 ml-3 mb-3 bg-blue-500 font-normal line-height-3 px-3 text-white"
               ></Button>
             </div>
-            {account?.login ? (
-              <div></div>
-            ) : (
-              <Link to="/account/register" className="font-bold px-5 py-3 p-button-raised p-button-rounded white-space-nowrap">
-                <span className="d-none d-md-inline text-2xl">Registrate</span>
-              </Link>
-            )}
           </div>
+
           <div className="flex justify-content-center md:justify-content-end">
             <div className="fondo"></div>
           </div>

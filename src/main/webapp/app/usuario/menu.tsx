@@ -189,6 +189,14 @@ const MenuUsuario = props => {
                   <span className="p-2">Ecosistemas</span>
                 </Link>
                 <Link
+                  to={`/entidad/comunidad/comunidades`}
+                  className="flex w-full  align-items-center justify-content-center font-medium menuOver "
+                  id="jh-tre1"
+                  data-cy="menu1"
+                >
+                  <span className="p-2">Comunidades</span>
+                </Link>
+                <Link
                   to={`/entidad/noticias/noticias-admin`}
                   className=" flex w-full  align-items-center justify-content-center font-medium menuOver"
                   id="jh-tre1"
@@ -197,7 +205,7 @@ const MenuUsuario = props => {
                   <span className="p-2">Noticias</span>
                 </Link>
                 <Link
-                  to={`entidad/proyectos/proyectos_admin/${props.account1.id}`}
+                  to={`/entidad/proyectos/proyectos_admin/${props.account1.id}`}
                   className=" flex w-full  align-items-center justify-content-center font-medium menuOver "
                   id="jh-tre1"
                   data-cy="menu1"
@@ -215,14 +223,17 @@ const MenuUsuario = props => {
               >
                 <span className="p-2">Unirse a un Ecosistema</span>
               </Link>
-              <Link
-                to={`/entidad/innovacion-racionalizacion/crud`}
-                className=" border-0 flex w-full  align-items-center justify-content-center  font-medium menuOver"
-                id="jh-tre2"
-                data-cy="menu2"
-              >
-                <span className="p-2">Innovaciones</span>
-              </Link>
+
+              {props.account1?.authorities?.find(rol => rol === 'ROLE_GESTOR') && (
+                <Link
+                  to={`/entidad/innovacion-racionalizacion/crud`}
+                  className=" border-0 flex w-full  align-items-center justify-content-center  font-medium menuOver"
+                  id="jh-tre2"
+                  data-cy="menu2"
+                >
+                  <span className="p-2">Innovaciones</span>
+                </Link>
+              )}
             </div>
           </div>
         </div>

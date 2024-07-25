@@ -26,6 +26,7 @@ import { InnovacionAbiertaMenu, InnovacionMenu } from './shared/layout/menus';
 import Comunidad from 'app/comunidad';
 import Noticias from 'app/entities/noticias/noticiasVista';
 import ContactoUpdatePrincipal from './entities/contacto/contactoPrincipal';
+import BusquedaGeneral from './usuario/busquedaGeneral';
 
 const loading = <div>loading ...</div>;
 
@@ -56,6 +57,7 @@ const Routes = () => {
         <ErrorBoundaryRoute path="/comunidad" component={Comunidad} />
         <PrivateRoute path="/usuario-panel/:index" component={Usuario} />
         <PrivateRoute path="/usuario-panel" component={Usuario} />
+        <PrivateRoute path="/buscar/:orden/:texto" component={BusquedaGeneral} />
         <PrivateRoute path="/nomencladores" component={EntitiesRoutesAdmin} hasAnyAuthorities={[AUTHORITIES.ADMIN]} />
 
         <ErrorBoundaryRoute path="/entidad/noticias/ver-noticias/:id" component={Noticias} />

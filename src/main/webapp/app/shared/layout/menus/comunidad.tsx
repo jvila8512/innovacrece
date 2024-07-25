@@ -5,16 +5,17 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Translate, translate } from 'react-jhipster';
 import { NavLink as Link } from 'react-router-dom';
 import { NavDropdown } from './menu-components';
+import MenuItemComunidad from './menu-item-comunidad';
+import { faPager } from '@fortawesome/free-solid-svg-icons';
 
 export const Comunidad = props => (
   <NavDropdown name="Comunidad" id="comunidad-menu" style={{ maxHeight: '80vh', overflow: 'auto' }}>
-    <MenuItem icon="asterisk" to="/comunidad/expertos" on={props.on}>
-      Expertos
-    </MenuItem>
-
-    <MenuItem icon="asterisk" to="/entidad/anirista/" on={props.on}>
-      Innovadores(ANIR)
-    </MenuItem>
+    {props.activas?.map((comunidad, i) => (
+      <MenuItemComunidad key={comunidad.id} icon={faPager} to={comunidad.link} on={props.on}>
+        {' '}
+        {comunidad.comunidad}
+      </MenuItemComunidad>
+    ))}
   </NavDropdown>
 );
 export default Comunidad;

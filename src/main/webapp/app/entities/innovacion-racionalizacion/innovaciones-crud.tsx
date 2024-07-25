@@ -27,6 +27,7 @@ import { ITipoIdea } from 'app/shared/model/tipo-idea.model';
 import { getEntities as getTipoIdeas } from 'app/entities/tipo-idea/tipo-idea.reducer';
 import { IInnovacionRacionalizacion } from 'app/shared/model/innovacion-racionalizacion.model';
 import { Toolbar } from 'primereact/toolbar';
+import { Tag } from 'primereact/tag';
 
 const InnovacionesCrud = (props: RouteComponentProps<{ id: string }>) => {
   const dispatch = useAppDispatch();
@@ -41,15 +42,20 @@ const InnovacionesCrud = (props: RouteComponentProps<{ id: string }>) => {
     aprobada: '',
     publico: null,
     tipoIdea: null,
+    user: null,
   };
 
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
     tematica: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
-    autores: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    titulo: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
+    sindicato: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }] },
     fecha: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
+    fechaPractica: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }] },
     numeroIdentidad: { operator: FilterOperator.AND, constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }] },
+    tipoIdea: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
   });
+
   const [globalFilterValue, setGlobalFilterValue] = useState('');
   const [innovacionDialog, setInnovacionDialog] = useState(false);
 
@@ -64,7 +70,10 @@ const InnovacionesCrud = (props: RouteComponentProps<{ id: string }>) => {
   const [selectedinnovacion, setselectedInnovacion] = useState(emptyInnovacion);
 
   const [innoDialogNew, setInnoDialogNew] = useState(false);
+  const [innoDialogNew1, setInnoDialogNew1] = useState(false);
   const [deleteInnoDialog, setDeleteInnoDialog] = useState(false);
+
+  const account = useAppSelector(state => state.authentication.account);
 
   const onGlobalFilterChange = e => {
     const value = e.target.value;
@@ -123,6 +132,7 @@ const InnovacionesCrud = (props: RouteComponentProps<{ id: string }>) => {
       ...innovacionRacionalizacionEntity,
       ...values,
       tipoIdea: tipoIdeas.find(it => it.id.toString() === values.tipoIdea.toString()),
+      user: account,
     };
 
     if (isNew) {
@@ -141,8 +151,9 @@ const InnovacionesCrud = (props: RouteComponentProps<{ id: string }>) => {
         };
 
   const editProduct = innovacion1 => {
-    setselectedInnovacion({ ...innovacion1 });
-    setInnovacionDialog(true);
+    setselectedInnovacion(innovacion1);
+    setInnoDialogNew1(true);
+    setNew(false);
   };
   const confirmDeleteSelected = rowEcosistema => {
     setDeleteInnoDialog(true);
@@ -155,17 +166,22 @@ const InnovacionesCrud = (props: RouteComponentProps<{ id: string }>) => {
   };
   const actionBodyTemplate = rowData => {
     return (
-      <React.Fragment>
+      <div className="align-items-center justify-content-center">
         <Button icon="pi pi-eye" className="p-button-rounded p-button-info ml-2 mb-1" onClick={() => editProduct(rowData)} />
         <Button icon="pi pi-trash" className="p-button-rounded p-button-danger ml-2 mb-1" onClick={() => confirmDeleteSelected(rowData)} />
-        <Button icon="pi pi-pencil" className="p-button-rounded p-button-warning ml-2 mb-1" onClick={() => actualizarInno(rowData)} />
-      </React.Fragment>
+        {account.id === rowData?.user?.id && (
+          <Button icon="pi pi-pencil" className="p-button-rounded p-button-warning ml-2 mb-1" onClick={() => actualizarInno(rowData)} />
+        )}
+      </div>
     );
   };
 
   const hideDialogNuevo = () => {
     setInnoDialogNew(false);
     setNew(true);
+  };
+  const hideDialogNuevo1 = () => {
+    setInnoDialogNew1(false);
   };
   const atras = () => {
     props.history.push(`/usuario-panel`);
@@ -190,7 +206,9 @@ const InnovacionesCrud = (props: RouteComponentProps<{ id: string }>) => {
   const rightToolbarTemplate = () => {
     return (
       <React.Fragment>
-        <Button label="Nueva Innovación" icon="pi pi-plus" className="p-button-info" onClick={verDialogNuevo} />
+        {account?.authorities?.find(rol => rol === 'ROLE_GESTOR') && (
+          <Button label="Nueva Innovación" icon="pi pi-plus" className="p-button-info" onClick={verDialogNuevo} />
+        )}
       </React.Fragment>
     );
   };
@@ -209,6 +227,17 @@ const InnovacionesCrud = (props: RouteComponentProps<{ id: string }>) => {
       <Button label="Sí" icon="pi pi-check" className="p-button-text" onClick={deleteInno} />
     </>
   );
+  const tematicaBodyTemplate = rowData => {
+    return (
+      <>
+        <span className="pl-5">{rowData.tematica}</span>
+      </>
+    );
+  };
+  const estadoTemplate = rowData => {
+    return <>{rowData.aprobada ? <Tag value="Aprobada" severity="success"></Tag> : <Tag value="No Aprobada" severity="danger"></Tag>}</>;
+  };
+
   return (
     <div className="grid crud-demo mt-3 mb-4">
       <div className="col-12">
@@ -231,14 +260,15 @@ const InnovacionesCrud = (props: RouteComponentProps<{ id: string }>) => {
             loading={loading}
             responsiveLayout="stack"
             globalFilterFields={['tematica', 'fecha', 'numeroIdentidad', 'autores', 'vp']}
-            emptyMessage="No existen Innovaciones en el sistema."
+            emptyMessage="No existen Innovaciones."
             currentPageReportTemplate="Mostrar {first} al {last} de {totalRecords} Innovaciones"
           >
-            <Column field="fecha" header="Fecha" sortable style={{ minWidth: '14rem' }} />
-            <Column field="tematica" header="Tematica" sortable style={{ minWidth: '14rem' }} />
-            <Column field="autores" header="Autores" sortable style={{ minWidth: '14rem' }} />
-            <Column field="numeroIdentidad" header="Número Identidad" sortable style={{ minWidth: '14rem' }} />
-
+            <Column field="fecha" header="Fecha" sortable style={{ minWidth: '6rem' }} />
+            <Column field="tipoIdea.tipoIdea" header="Tipo Idea" sortable style={{ minWidth: '12rem' }} />
+            <Column field="titulo" header="Título" sortable style={{ minWidth: '14rem' }} />
+            <Column field="tematica" header="Tematica" body={tematicaBodyTemplate} sortable style={{ minWidth: '14rem' }} />
+            <Column field="sindicato" header="sindicato" sortable style={{ minWidth: '14rem' }} />
+            <Column field="aprobada" header="Escalable" sortable body={estadoTemplate} headerStyle={{ minWidth: '7rem' }}></Column>
             <Column body={actionBodyTemplate} exportable={false} style={{ minWidth: '8rem' }}></Column>
           </DataTable>
         </div>
@@ -261,10 +291,46 @@ const InnovacionesCrud = (props: RouteComponentProps<{ id: string }>) => {
                   />
                 ) : null}
                 <ValidatedField
+                  id="innovacion-racionalizacion-tipoIdea"
+                  name="tipoIdea"
+                  data-cy="tipoIdea"
+                  label={translate('jhipsterApp.innovacionRacionalizacion.tipoIdea')}
+                  type="select"
+                >
+                  <option value="" key="0" />
+                  {tipoIdeas
+                    ? tipoIdeas.map(otherEntity => (
+                        <option value={otherEntity.id} key={otherEntity.id}>
+                          {otherEntity.tipoIdea}
+                        </option>
+                      ))
+                    : null}
+                </ValidatedField>
+                <ValidatedField
+                  label={translate('jhipsterApp.innovacionRacionalizacion.titulo')}
+                  id="innovacion-racionalizacion-titulo"
+                  name="titulo"
+                  data-cy="titulo"
+                  type="text"
+                  validate={{
+                    required: { value: true, message: translate('entity.validation.required') },
+                  }}
+                />
+                <ValidatedField
                   label={translate('jhipsterApp.innovacionRacionalizacion.tematica')}
                   id="innovacion-racionalizacion-tematica"
                   name="tematica"
                   data-cy="tematica"
+                  type="text"
+                  validate={{
+                    required: { value: true, message: translate('entity.validation.required') },
+                  }}
+                />
+                <ValidatedField
+                  label={translate('jhipsterApp.innovacionRacionalizacion.sindicato')}
+                  id="innovacion-racionalizacion-sindicato"
+                  name="sindicato"
+                  data-cy="sindicato"
                   type="text"
                   validate={{
                     required: { value: true, message: translate('entity.validation.required') },
@@ -281,14 +347,13 @@ const InnovacionesCrud = (props: RouteComponentProps<{ id: string }>) => {
                   }}
                 />
                 <ValidatedField
-                  label={translate('jhipsterApp.innovacionRacionalizacion.vp')}
-                  id="innovacion-racionalizacion-vp"
-                  name="vp"
-                  data-cy="vp"
-                  type="text"
+                  label={translate('jhipsterApp.innovacionRacionalizacion.fechaPractica')}
+                  id="innovacion-racionalizacion-fechaPractica"
+                  name="fechaPractica"
+                  data-cy="fechaPractica"
+                  type="date"
                   validate={{
                     required: { value: true, message: translate('entity.validation.required') },
-                    validate: v => isNumber(v) || translate('entity.validation.number'),
                   }}
                 />
                 <ValidatedField
@@ -335,22 +400,6 @@ const InnovacionesCrud = (props: RouteComponentProps<{ id: string }>) => {
                   check
                   type="checkbox"
                 />
-                <ValidatedField
-                  id="innovacion-racionalizacion-tipoIdea"
-                  name="tipoIdea"
-                  data-cy="tipoIdea"
-                  label={translate('jhipsterApp.innovacionRacionalizacion.tipoIdea')}
-                  type="select"
-                >
-                  <option value="" key="0" />
-                  {tipoIdeas
-                    ? tipoIdeas.map(otherEntity => (
-                        <option value={otherEntity.id} key={otherEntity.id}>
-                          {otherEntity.tipoIdea}
-                        </option>
-                      ))
-                    : null}
-                </ValidatedField>
                 &nbsp;
                 <Button color="primary" id="save-entity" data-cy="entityCreateSaveButton" type="submit" disabled={updating}>
                   <span className="m-auto pl-2">
@@ -363,6 +412,7 @@ const InnovacionesCrud = (props: RouteComponentProps<{ id: string }>) => {
             )}
           </Row>
         </Dialog>
+
         <Dialog
           visible={deleteInnoDialog}
           style={{ width: '450px' }}
@@ -379,6 +429,157 @@ const InnovacionesCrud = (props: RouteComponentProps<{ id: string }>) => {
               </span>
             )}
           </div>
+        </Dialog>
+
+        <Dialog
+          visible={innoDialogNew1}
+          style={{ width: '600px' }}
+          header="Innovación"
+          modal
+          className="p-fluid  "
+          onHide={hideDialogNuevo1}
+        >
+          <Row className="justify-content-center">
+            {loading ? (
+              <p>Cargando...</p>
+            ) : (
+              <ValidatedForm defaultValues={defaultValues()} onSubmit={saveEntity}>
+                {!isNew ? (
+                  <ValidatedField
+                    name="id"
+                    required
+                    readOnly
+                    hidden
+                    id="innovacion-racionalizacion-id"
+                    label={translate('global.field.id')}
+                    validate={{ required: true }}
+                  />
+                ) : null}
+                <ValidatedField
+                  id="innovacion-racionalizacion-tipoIdea"
+                  name="tipoIdea"
+                  data-cy="tipoIdea"
+                  disabled
+                  label={translate('jhipsterApp.innovacionRacionalizacion.tipoIdea')}
+                  type="select"
+                >
+                  <option value="" key="0" />
+                  {tipoIdeas
+                    ? tipoIdeas.map(otherEntity => (
+                        <option value={otherEntity.id} key={otherEntity.id}>
+                          {otherEntity.tipoIdea}
+                        </option>
+                      ))
+                    : null}
+                </ValidatedField>
+                <ValidatedField
+                  label={translate('jhipsterApp.innovacionRacionalizacion.titulo')}
+                  id="innovacion-racionalizacion-titulo"
+                  name="titulo"
+                  data-cy="titulo"
+                  readOnly
+                  type="text"
+                  validate={{
+                    required: { value: true, message: translate('entity.validation.required') },
+                  }}
+                />
+                <ValidatedField
+                  label={translate('jhipsterApp.innovacionRacionalizacion.tematica')}
+                  id="innovacion-racionalizacion-tematica"
+                  name="tematica"
+                  data-cy="tematica"
+                  type="text"
+                  readOnly
+                  validate={{
+                    required: { value: true, message: translate('entity.validation.required') },
+                  }}
+                />
+                <ValidatedField
+                  label={translate('jhipsterApp.innovacionRacionalizacion.sindicato')}
+                  id="innovacion-racionalizacion-sindicato"
+                  name="sindicato"
+                  data-cy="sindicato"
+                  type="text"
+                  readOnly
+                  validate={{
+                    required: { value: true, message: translate('entity.validation.required') },
+                  }}
+                />
+                <ValidatedField
+                  label={translate('jhipsterApp.innovacionRacionalizacion.fecha')}
+                  id="innovacion-racionalizacion-fecha"
+                  name="fecha"
+                  data-cy="fecha"
+                  type="date"
+                  readOnly
+                  validate={{
+                    required: { value: true, message: translate('entity.validation.required') },
+                  }}
+                />
+                <ValidatedField
+                  label={translate('jhipsterApp.innovacionRacionalizacion.fechaPractica')}
+                  id="innovacion-racionalizacion-fechaPractica"
+                  name="fechaPractica"
+                  data-cy="fechaPractica"
+                  type="date"
+                  readOnly
+                  validate={{
+                    required: { value: true, message: translate('entity.validation.required') },
+                  }}
+                />
+
+                <ValidatedField
+                  label={translate('jhipsterApp.innovacionRacionalizacion.autores')}
+                  id="innovacion-racionalizacion-autores"
+                  name="autores"
+                  data-cy="autores"
+                  type="text"
+                  readOnly
+                  validate={{
+                    required: { value: true, message: translate('entity.validation.required') },
+                  }}
+                />
+                <ValidatedField
+                  label={translate('jhipsterApp.innovacionRacionalizacion.numeroIdentidad')}
+                  id="innovacion-racionalizacion-numeroIdentidad"
+                  name="numeroIdentidad"
+                  data-cy="numeroIdentidad"
+                  type="text"
+                  readOnly
+                  validate={{
+                    required: { value: true, message: translate('entity.validation.required') },
+                    validate: v => isNumber(v) || translate('entity.validation.number'),
+                  }}
+                />
+                <ValidatedField
+                  label={translate('jhipsterApp.innovacionRacionalizacion.observacion')}
+                  id="innovacion-racionalizacion-observacion"
+                  name="observacion"
+                  data-cy="observacion"
+                  type="textarea"
+                  readOnly
+                />
+                <ValidatedField
+                  label={translate('jhipsterApp.innovacionRacionalizacion.aprobada')}
+                  id="innovacion-racionalizacion-aprobada"
+                  name="aprobada"
+                  data-cy="aprobada"
+                  check
+                  type="checkbox"
+                  readOnly
+                />
+                <ValidatedField
+                  label={translate('jhipsterApp.innovacionRacionalizacion.publico')}
+                  id="innovacion-racionalizacion-publico"
+                  name="publico"
+                  data-cy="publico"
+                  check
+                  type="checkbox"
+                  readOnly
+                />
+              </ValidatedForm>
+            )}
+          </Row>
         </Dialog>
       </div>
     </div>

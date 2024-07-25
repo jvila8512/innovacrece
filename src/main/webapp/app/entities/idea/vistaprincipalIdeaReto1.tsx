@@ -140,40 +140,39 @@ const VistaprincipalIdeaReto1 = (
       <div className="grid  grid-nogutter surface-0 text-800">
         {renderDevRibbon()}
         <div className="col-12 lg:col-6">
-          <div className="flex p-6 sm:justify-content-center text-center md:text-left flex align-items-center ">
+          <div className="flex p-2  md:text-left flex align-items-center ">
             <section className="flex flex-column">
-              <h1 className="text-6xl font-bold text-gray-900 line-height-2">
+              <h1 className=" text-2xl sm:text-4xl font-bold text-gray-900 line-height-2">
                 <span className="font-light block">{ideaEntity.titulo}</span>
               </h1>
-              <p className="font-normal text-2xl line-height-3 md:mt-3 text-gray-700">Autor: {ideaEntity.autor}</p>
-              <p className="font-normal text-2xl line-height-3 md:mt-3 text-gray-700">
+              <p className="font-normal text-xl sm:text-2xl line-height-3 md:mt-3 text-gray-700">Autor: {ideaEntity.autor}</p>
+              <p className="font-normal text-xl sm:text-2xl line-height-3 md:mt-3 text-gray-700">
                 Fecha Inscripción:{' '}
                 {ideaEntity.fechaInscripcion ? (
                   <TextFormat type="date" value={ideaEntity.fechaInscripcion} format={APP_LOCAL_DATE_FORMAT} />
                 ) : null}
               </p>
-              <p className="font-normal text-2xl line-height-3 md:mt-3 text-gray-700">Entidad: {ideaEntity?.entidad?.entidad}</p>
-              <br></br>
+              <p className="font-normal text-xl sm:text-2xl line-height-3 md:mt-3 text-gray-700">Entidad: {ideaEntity?.entidad?.entidad}</p>
+
               <span className="text-500">
-                {' '}
                 Visitas
                 <span className="text-green-500 font-medium"> {ideaEntity.visto}</span>
               </span>
 
-              <br></br>
               <span className="text-500">
-                {' '}
                 Comentarios
                 <span className="text-green-500 font-medium"> {comenetariosIdeaEntities.length}</span>
               </span>
               {reto.user?.id === account.id && (
-                <Button
-                  label="Aceptar"
-                  icon={ideaEntity.aceptada ? 'pi pi-thumbs-down ' : ' pi pi-thumbs-up-fill'}
-                  className={ideaEntity.aceptada ? 'p-button-danger mr-2 mt-2' : 'p-button-success mr-2 mt-2'}
-                  onClick={saveEntity}
-                  disabled={updating}
-                />
+                <div className="flex justify-content-start">
+                  <Button
+                    label="Aceptar"
+                    icon={ideaEntity.aceptada ? 'pi pi-thumbs-down ' : ' pi pi-thumbs-up-fill'}
+                    className={ideaEntity.aceptada ? 'p-button-danger mr-2 mt-2' : 'p-button-success mr-2 mt-2'}
+                    onClick={saveEntity}
+                    disabled={updating}
+                  />
+                </div>
               )}
             </section>
           </div>
@@ -192,7 +191,7 @@ const VistaprincipalIdeaReto1 = (
             )}
           </div>
         </div>
-        <div className="xl:col-12 sm:col-12 md:col-12"></div>
+
         <Accordion
           activeIndex={0}
           expandIcon="pi pi-chevron-down"
@@ -216,7 +215,7 @@ const VistaprincipalIdeaReto1 = (
           <Col md="12" className="card ">
             {!updateSuccessComentario && (
               <ValidatedForm defaultValues={defaultValuesIdeaComentarios()} onSubmit={saveEntityComentariosIdea}>
-                <div className="flex align-items-center mb-3">
+                <div className="flex align-items-center text-xs sm:text-sm mb-3">
                   <i className="pi pi-check-circle text-aling-justify  text-green-500 mr-2"></i>
                   <span>
                     Este sitio se reserva el derecho de la publicación de los comentarios. No se harán visibles aquellos que sean

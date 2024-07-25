@@ -2,7 +2,7 @@ import './header.scss';
 
 import React, { useEffect, useState } from 'react';
 import { Translate, Storage, ValidatedForm } from 'react-jhipster';
-import { Navbar, Nav, NavbarToggler, Collapse } from 'reactstrap';
+import { Navbar, Nav, NavbarToggler, Collapse, NavLink } from 'reactstrap';
 import LoadingBar from 'react-redux-loading-bar';
 
 import { Home, Brand, Panel } from './header-components';
@@ -37,6 +37,7 @@ export interface IHeaderProps {
   isInProduction: boolean;
   isOpenAPIEnabled: boolean;
   currentLocale: string;
+  comunidades: any;
 }
 
 const Header = (props: IHeaderProps) => {
@@ -86,15 +87,14 @@ const Header = (props: IHeaderProps) => {
       {renderDevRibbon()}
 
       <Navbar bg="light" data-cy="navbar" dark container="fluid" expand="xl" fixed="top" className="jh-navbar ml-auto">
-        <NavbarToggler aria-label="Menu" onClick={toggleMenu} className="me-2" />
         <Brand />
-
+        <NavbarToggler aria-label="Menu" onClick={toggleMenu} className="me-2" />
         <Collapse isOpen={menuOpen} navbar className="">
           <Nav id="header-tabs" className="ms-auto" navbar>
             <Home on={toggleMenu} />
 
-            {<InnovacionMenu on={toggleMenu} />}
-
+            {props.isAuthenticated && <InnovacionMenu on={toggleMenu} />}
+            {props.isAuthenticated && <Comunidad activas={props.comunidades} on={toggleMenu} />}
             {props.isAuthenticated && isAdmin && <EntitiesMenu on={toggleMenu} />}
             {props.isAuthenticated && isAdmin && <EntidadesAdmin on={toggleMenu} />}
             {props.isAuthenticated && props.isAdmin && <AdminMenu on={toggleMenu} showOpenAPI={props.isOpenAPIEnabled} />}

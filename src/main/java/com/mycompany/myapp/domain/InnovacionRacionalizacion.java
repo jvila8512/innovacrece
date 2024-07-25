@@ -24,6 +24,10 @@ public class InnovacionRacionalizacion implements Serializable {
     private Long id;
 
     @NotNull
+    @Column(name = "titulo", nullable = false)
+    private String titulo;
+
+    @NotNull
     @Column(name = "tematica", nullable = false)
     private String tematica;
 
@@ -31,7 +35,26 @@ public class InnovacionRacionalizacion implements Serializable {
     @Column(name = "fecha", nullable = false)
     private LocalDate fecha;
 
+    public LocalDate getFechaPractica() {
+        return fechaPractica;
+    }
+
+    public void setFechaPractica(LocalDate fechaPractica) {
+        this.fechaPractica = fechaPractica;
+    }
+
     @NotNull
+    @Column(name = "fecha_practica", nullable = false)
+    private LocalDate fechaPractica;
+
+    public String getTitulo() {
+        return titulo;
+    }
+
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
+    }
+
     @Column(name = "vp", nullable = false)
     private Integer vp;
 
@@ -39,13 +62,20 @@ public class InnovacionRacionalizacion implements Serializable {
     @Column(name = "autores", nullable = false)
     private String autores;
 
-    @NotNull
     @Column(name = "numero_identidad", nullable = false)
     private Long numeroIdentidad;
 
     @Lob
     @Column(name = "observacion")
     private String observacion;
+
+    public String getSindicato() {
+        return sindicato;
+    }
+
+    public void setSindicato(String sindicato) {
+        this.sindicato = sindicato;
+    }
 
     @Column(name = "aprobada")
     private Boolean aprobada;
@@ -54,11 +84,31 @@ public class InnovacionRacionalizacion implements Serializable {
     @Column(name = "publico", nullable = false)
     private Boolean publico;
 
+    @Lob
+    @Column(name = "sindicato", nullable = false)
+    private String sindicato;
+
     @ManyToOne
     @JsonIgnoreProperties(value = { "ideas", "innovacionRacionalizacions" }, allowSetters = true)
     private TipoIdea tipoIdea;
 
+    @ManyToOne
+    private User user;
+
     // jhipster-needle-entity-add-field - JHipster will add fields here
+
+    public User getUser() {
+        return this.user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public InnovacionRacionalizacion user(User user) {
+        this.setUser(user);
+        return this;
+    }
 
     public Long getId() {
         return this.id;

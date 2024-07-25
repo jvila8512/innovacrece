@@ -360,7 +360,7 @@ const ProyectosAdmin = (props: RouteComponentProps<{ id: string }>) => {
           >
             {selectedProyecto?.logoUrl && (
               <img
-                src={`data:${selectedProyecto?.logoUrlContentType};base64,${selectedProyecto?.logoUrl}`}
+                src={`content/uploads/${selectedProyecto.logoUrlContentType}`}
                 style={{ maxHeight: '200px' }}
                 className="mt-0 mx-auto mb-5 block shadow-2"
               />
@@ -387,6 +387,7 @@ const ProyectosAdmin = (props: RouteComponentProps<{ id: string }>) => {
                       name="id"
                       required
                       readOnly
+                      hidden
                       id="proyectos-id"
                       label={translate('global.field.id')}
                       validate={{ required: true }}
